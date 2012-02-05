@@ -1,0 +1,28 @@
+Keyboard Controls for Bacteria
+##############################
+
+Please note that Bacteria is a simulator, therefore there will never be any way
+to control the bacteria. Your role is to watch life unfold :)
+
+Available controls:
+
+B
+	- Adds a bacteria at a random location.
+
+C
+	- Toggles the display of the coordinates of the bacteria.
+
+E
+	- Toggles the display of bacteria energy.
+
+F
+	- Adds a food nugget at a random location.
+
+Q/Escape
+	- Exits the application.
+
+S
+	- Hides or displays the statistics.
+
+T
+	- Toggles between text energy display or graphical energy display.

@@ -1,0 +1,16 @@
+Bacteria README
+###############
+
+Bacteria is a simple bacteria simulator. It was created on a train ride in
+2009, and is meant to be somewhat entertaining to watch; therefore it has
+absolutely nothing to do with science.
+
+You can, however, graph the bacteria and food populations, using the
+plot_data.p GnuPlot script.
+
+Please note that the code is still undergoing revisions, as the code was pretty
+messy to begin with; the application should, however, build and run without
+trouble.
+
+Any bugs you encounter should be reported on http://github.com/skordal/bacteria.
+

@@ -1,0 +1,23 @@
+Bacteria Quickstart Guide
+#########################
+
+Step 1:
+	Start the programme. If you want it to start without a GUI, pass the
+	command line argument --no-gui. Note that it will still require X to
+	be running due to SDL's dependence on it.
+
+Step 2:
+	Watch (alternatively through Paramecium) your little bacteria colony
+	grow and thrive as your little bacteria eats and reproduces.
+	Eventually they will manage to not find any food and die. That's life.
+	Should this happen and you become sad, repeat step 1.
+
+Step 3:
+	Install GnuPlot and run the script plot_graph.p. A graph will display
+	the population of bacteria vs. the amount of food. This script will
+	only work if you have not changed the default output file for the graph
+	data.
+
+Step 4:
+	Repeat 1-3 as neccessary. Report bugs to kristian.skordal@gmail.com.
+

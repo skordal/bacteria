@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding = UTF-8
+Version = 0.1
+Type = Application
+Name = Bacteria
+GenericName = Bacteria simulator
+Comment = Watch your little bacteria friends eat and multiply.
+Icon = /usr/share/bacteria/graphics/icon.png
+Exec = bacteria
+Categories = Game;Simulation
+TryExec = bacteria
