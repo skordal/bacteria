@@ -32,19 +32,6 @@ vector::vector(double ang, double magn, float px, float py)
 	y = py;
 }
 
-// This function calculates a new angle for when
-// an object collides with the sides of the screen.
-// The sides argument is used to determine how this is done;
-// use REFLECT_SIDES if the collision is with the sides of the screen,
-// and use REFLECT_TOP_BOTTOM for when the collision is with the top or bottom.
-void vector::reflect(bool sides)
-{
-	if(sides)
-		angle = M_PI - angle;
-	else
-		angle -= 2 * angle;
-}
-
 // Returns the x and y components of the vector as a coordinate pair:
 coordinate_pair_t vector::decompose()
 {
@@ -106,11 +93,5 @@ double vector::angle_between(coordinate_pair_t a, coordinate_pair_t b)
 	delta_y = a.y - b.y;
 
 	return atan2(delta_y, delta_x);
-}
-
-void vector::calc_pos()
-{
-	x += cos(angle) * magnitude;
-	y -= sin(angle) * magnitude;
 }
 

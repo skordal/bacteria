@@ -153,14 +153,18 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 		float distance = vector::distance_between(temp_center, food_location);
 
 		// Check if the bacteria is within "smelling distance" of the food:
-		if(distance <= config->get_float_value("FoodSmellingDistance") && !temp.is_heading_for_food())
+		if(distance <= config->get_float_value("FoodSmellingDistance")
+			&& !temp.is_heading_for_food())
 		{
 			coordinate_pair_t anchor_temp = this->closest_anchor(temp_center);
 			if(!(anchor_temp.x == 0 && anchor_temp.y == 0))
 				temp.set_destination(anchor_temp);
 		} else if(temp.is_heading_for_food())
 		{
-			if(CMP_PAIR(bacteria_dest, ANCHOR_1) || CMP_PAIR(bacteria_dest, ANCHOR_2) || CMP_PAIR(bacteria_dest, ANCHOR_3) || CMP_PAIR(bacteria_dest, ANCHOR_4))
+			if(CMP_PAIR(bacteria_dest, ANCHOR_1)
+				|| CMP_PAIR(bacteria_dest, ANCHOR_2)
+				|| CMP_PAIR(bacteria_dest, ANCHOR_3)
+				|| CMP_PAIR(bacteria_dest, ANCHOR_4))
 			{
 				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_1, ACCEPTABLE))
 				{

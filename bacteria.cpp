@@ -113,21 +113,36 @@ bool bacteria::update()
 	if(at_food || !alive)
 		return alive;
 
-	speed.calc_pos();
+	// Update the position of the bacteria:
+	speed.set_x(speed.get_x() + (cos(speed.get_angle()) * speed.get_magnitude()));
+	speed.set_y(speed.get_y() - (sin(speed.get_angle()) * speed.get_magnitude()));
 
+	// If heading for food, check if there is still food at the discovered food's
+	// location:
 	if(heading_for_food)
 	{
 		temp_food_dist = vector::distance_between(bacteria_center, food_loc);
+		// If the food is getting closer, store the current position to the
+		// food for next time, if not, release the bacteria from this food
+		// nugget, making it free to look for other food:
 		if(temp_food_dist <= prev_food_dist)
 			prev_food_dist = temp_food_dist;
 		else
 			release(false);
 	}
 
-	if(speed.get_x() >= (config->get_int_value("ScreenWidth") - BACTERIA_WIDTH) || speed.get_x() <= 0.0f)
-		speed.reflect(REFLECT_SIDES);
-	if(speed.get_y() >= (config->get_int_value("ScreenHeight") - BACTERIA_HEIGHT) || speed.get_y() <= 0.0f)
-		speed.reflect(REFLECT_TOP_BOTTOM);
+	// Check for collision with the screen edges:
+	if(speed.get_x() >= (config->get_int_value("ScreenWidth") - BACTERIA_WIDTH)
+		|| speed.get_x() <= 0.0f)
+	{
+		speed.set_angle(M_PI - speed.get_angle());
+	}
+
+	if(speed.get_y() >= (config->get_int_value("ScreenHeight") - BACTERIA_HEIGHT)
+		|| speed.get_y() <= 0.0f)
+	{
+		speed.set_angle(speed.get_angle() - 2 * speed.get_angle());
+	}
 
 	return alive;
 }

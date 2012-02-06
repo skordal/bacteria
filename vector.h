@@ -7,11 +7,9 @@
 #define VECTOR_H
 
 #include <cmath>
+
 #include "config.h"
 #include "macros.h"
-
-#define REFLECT_SIDES true
-#define REFLECT_TOP_BOTTOM false
 
 #define ACCEPTABLE ACCEPTABLE_TOLERANCE
 
@@ -28,24 +26,21 @@ class vector
 {
 	public:
 		vector();
-		vector(const vector & copyme);
+		vector(const vector & copy);
 		vector(double ang, double magn, float px = 0.0f, float py = 0.0f);
 
 		float get_x() const { return x; }
 		float get_y() const { return y; }
 
-		void set_x(float nx) { x = nx; }
-		void set_y(float ny) { y = ny; }
-		void set_xy(float nx, float ny) { x = nx; y = ny; }
+		void set_x(float x) { this->x = x; }
+		void set_y(float y) { this->y = y; }
+		void set_xy(float x, float y) { this->x = x; this->y = y; }
 
 		double get_magnitude() const { return magnitude; }
 		double get_angle() const { return angle; }
 
 		void set_angle(double new_angle) { angle = new_angle; }
 		void set_magnitude(double new_magnitude) { magnitude = new_magnitude; }
-
-		void calc_pos();
-		void reflect(bool sides = false); // Set to true if colliding with sides.
 
 		coordinate_pair_t decompose();
 		coordinate_pair_t get_position();
