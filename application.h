@@ -31,9 +31,6 @@
 #define UPDATE_EVENT {SDL_USEREVENT, 0, NULL, NULL}
 #define LOGGER_EVENT {SDL_USEREVENT, 1, NULL, NULL}
 
-Uint32 timer_callback(Uint32 interval, void * unused);
-Uint32 logger_timer_cb(Uint32 interval, void * logger_object);
-
 class application
 {
 	public:
@@ -62,7 +59,7 @@ class application
 		int option, counter, logging_interval;
 		int starting_pop, starting_food;
 		int screen_x, screen_y;
-		const char * config_filename;
+		char * config_filename;
 		bool display_coords, display_energy;
 		bool display_stats, graphical_energy_bar;
 

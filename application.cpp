@@ -24,30 +24,34 @@ config_db * config;
 list<bacteria> bacteria_list;
 list<food> food_list;
 
+// Timer callback functions:
+Uint32 timer_callback(Uint32 interval, void * unused);
+Uint32 logger_timer_cb(Uint32 interval, void * logger_object);
+
 // Search path for finding image files:
 const char * image_search_path[] = {
 	"/usr/share/bacteria/",
 	"/usr/local/share/bacteria/",
 	"/opt/local/share/bacteria/",
 	"./",
-	NULL
+	0
 };
 
 const char * opt_string = "b:c:f:i:x:y:hv";
 static struct option cmd_options[] = {
-{"bacteria", required_argument, NULL, 'b'},
-{"config", required_argument, NULL, 'c'},
-{"food", required_argument, NULL, 'f'},
-{"interval", required_argument, NULL, 'i'},
-{"help", no_argument, NULL, 'h'},
-{"version", no_argument, NULL, 'v'},
+{"bacteria", required_argument, 0, 'b'},
+{"config", required_argument, 0, 'c'},
+{"food", required_argument, 0, 'f'},
+{"interval", required_argument, 0, 'i'},
+{"help", no_argument, 0, 'h'},
+{"version", no_argument, 0, 'v'},
 {0, 0, 0, 0}
 };
 
 application::application()
 {
-	config_filename = NULL;
-	window_icon = NULL;
+	config_filename = 0;
+	window_icon = 0;
 	printf("Bacteria %d.%d - (c) Kristian K. Skordal 2009\n\n", VERSION_MAJOR, VERSION_MINOR);
 
 	display_coords = false;
@@ -66,7 +70,7 @@ application::application()
 // all the other initialization functions:
 bool application::init(int argc, char * argv[])
 {
-	config_parser * config_file = NULL;
+	config_parser * config_file = 0;
 
 	if(!init_cmd_args(argc, argv))
 		return false;
@@ -103,7 +107,7 @@ bool application::init_cmd_args(int argc, char * argv[])
 {
 	printf("Parsing command line arguments...\n");
 
-	while((option = getopt_long(argc, argv, opt_string, cmd_options, NULL)) != -1)
+	while((option = getopt_long(argc, argv, opt_string, cmd_options, 0)) != -1)
 	{
 		switch(option)
 		{
@@ -112,7 +116,7 @@ bool application::init_cmd_args(int argc, char * argv[])
 				break;
 			case 'c':
 				config_filename = new char[strlen(optarg) + 1];
-				strcpy(const_cast<char *>(config_filename), optarg);
+				strcpy(config_filename, optarg);
 				break;
 			case 'f':
 				starting_food = atoi(optarg);
@@ -135,7 +139,7 @@ bool application::init_cmd_args(int argc, char * argv[])
 // This function reads the configuration file:
 bool application::init_config()
 {
-	config_parser * config_file = NULL;
+	config_parser * config_file = 0;
 
 	printf("Reading configuration...\n");
 	config = new config_db();
@@ -150,7 +154,7 @@ bool application::init_config()
 	if(logging_interval != config->get_int_value("LoggerUpdateInterval"))
 		config->set_value("LoggerUpdateInterval", logging_interval);
 
-	if(config_filename != NULL)
+	if(config_filename != 0)
 	{
 		if(config_parser::config_file_exists(config_filename))
 		{
@@ -166,7 +170,8 @@ bool application::init_config()
 			printf("Cannot access \"%s\", continuing without...\n", config_filename);
 		delete[] config_filename;
 	}
-	if(config_file != NULL)
+
+	if(config_file != 0)
 		delete config_file;
 
 	return true;
@@ -176,7 +181,7 @@ bool application::init_config()
 bool application::init_random()
 {
 	printf("Initializing random number generator...\n");
-	srandom(time(NULL));
+	srandom(time(0));
 
 	return true;
 }
@@ -194,7 +199,7 @@ bool application::init_sdl()
 		return false;
 
 	font = TTF_OpenFont(STATUS_FONT, STATUS_FONT_SIZE);
-	if(font == NULL)
+	if(font == 0)
 	{
 		printf("ERROR: Could not load font \"%s\"\n", STATUS_FONT);
 		return false;
@@ -203,7 +208,7 @@ bool application::init_sdl()
 
 	printf("Creating main window (%d x %d)...\n", config->get_int_value("ScreenWidth"), config->get_int_value("ScreenHeight"));
 	screen = SDL_SetVideoMode(config->get_int_value("ScreenWidth"), config->get_int_value("ScreenHeight"), 0, config->get_bool_value("Fullscreen") ? SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN : SDL_HWSURFACE|SDL_DOUBLEBUF);
-	if(screen == NULL)
+	if(screen == 0)
 	{
 		printf("Could not create main window!\n");
 		return false;
@@ -213,10 +218,10 @@ bool application::init_sdl()
 	SDL_WM_SetCaption("Bacteria Simulator", "Bacteria");
 
 	window_icon = SDL_LoadBMP(ICON_FILENAME);
-	if(window_icon != NULL)
+	if(window_icon != 0)
 	{
 		SDL_SetColorKey(window_icon, SDL_SRCCOLORKEY, SDL_MapRGB(window_icon->format, 255, 0, 255));
-		SDL_WM_SetIcon(window_icon, NULL);
+		SDL_WM_SetIcon(window_icon, 0);
 	} else
 		printf("WARNING: Could not load icon file: \"%s\"\n", ICON_FILENAME);
 	
@@ -278,7 +283,7 @@ bool application::init_populations()
 bool application::init_timers()
 {
 	printf("Starting timers...\n");
-	refresh_timer = SDL_AddTimer(1000 / config->get_int_value("FramesPerSecond"), timer_callback, NULL);
+	refresh_timer = SDL_AddTimer(1000 / config->get_int_value("FramesPerSecond"), timer_callback, 0);
 	logger_timer = SDL_AddTimer(config->get_int_value("LoggerUpdateInterval"), logger_timer_cb, (void *) data_logger);
 	
 	return true;
@@ -299,7 +304,7 @@ int application::run()
 				counter++;
 
 				// Clear the screen:
-				SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B));
+				SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B));
 
 				// Check if it's time for a new food nugget to spawn:
 				if(counter >= config->get_int_value("FoodSpawningRate") && !stats->get_game_over())
@@ -439,7 +444,7 @@ int application::run()
 char * application::find_file(const char * filename)
 {
 	char * current_search_path;
-	for(int c = 0; image_search_path[c] != NULL; c++)
+	for(int c = 0; image_search_path[c] != 0; c++)
 	{
 		char * temp = new char[MAX_PATHLEN];
 		current_search_path = const_cast<char *>(image_search_path[c]);
@@ -453,7 +458,7 @@ char * application::find_file(const char * filename)
 	}
 
 	printf("File not found: %s\n", filename);
-	return NULL;
+	return 0;
 }
 
 // Display the command line usage information for the application:

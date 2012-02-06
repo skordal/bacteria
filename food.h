@@ -22,7 +22,7 @@
 class food
 {
 	public:
-		food(int ix = 0, int iy = 0);
+		food(int x = 0, int y = 0);
 		~food();
 
 		bool update();

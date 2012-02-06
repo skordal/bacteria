@@ -10,15 +10,15 @@ extern image * food_image;
 extern config_db * config;
 
 // This function initializes the food nugget:
-food::food(int ix, int iy)
+food::food(int x, int y)
 {
-	x = ix;
-	y = iy;
+	this->x = x;
+	this->y = y;
 
-	anchor_1 = NULL;
-	anchor_2 = NULL;
-	anchor_3 = NULL;
-	anchor_4 = NULL;
+	anchor_1 = 0;
+	anchor_2 = 0;
+	anchor_3 = 0;
+	anchor_4 = 0;
 
 	energy = FOOD_ENERGY;
 }
@@ -30,7 +30,7 @@ void food::draw()
 	position.x = x;
 	position.y = y;
 
-	SDL_BlitSurface(food_image->get_image(), NULL, screen, &position);
+	SDL_BlitSurface(food_image->get_image(), 0, screen, &position);
 }
 
 // This function returns the "anchor point" closes to the specified bacteria.
@@ -44,14 +44,14 @@ coordinate_pair_t food::closest_anchor(const vector & bacteria_vector)
 	float distance_1, distance_2, distance_3, distance_4, eval_dist;
 	std::valarray<float> distances(4);
 
-	if(anchor_1 == NULL)
+	if(anchor_1 == 0)
 	{
 		distance_1 = vector::distance_between(this_vector, bacteria_vector);
 		distances[0] = distance_1;
 	} else
 		distances[0] = INFINITY;
 
-	if(anchor_2 == NULL)
+	if(anchor_2 == 0)
 	{
 		this_vector.set_xy(F_ANCHOR_2_X + x, F_ANCHOR_2_Y + y);
 		distance_2 = vector::distance_between(this_vector, bacteria_vector);
@@ -59,7 +59,7 @@ coordinate_pair_t food::closest_anchor(const vector & bacteria_vector)
 	} else 
 		distances[1] = INFINITY;
 
-	if(anchor_3 == NULL)
+	if(anchor_3 == 0)
 	{
 		this_vector.set_xy(F_ANCHOR_3_X + x, F_ANCHOR_3_Y + y);
 		distance_3 = vector::distance_between(this_vector, bacteria_vector);
@@ -67,7 +67,7 @@ coordinate_pair_t food::closest_anchor(const vector & bacteria_vector)
 	} else 
 		distances[2] = INFINITY;
 
-	if(anchor_4 == NULL)
+	if(anchor_4 == 0)
 	{
 		this_vector.set_xy(F_ANCHOR_4_X + x, F_ANCHOR_4_Y + y);
 		distance_4 = vector::distance_between(this_vector, bacteria_vector);
@@ -97,22 +97,22 @@ bool food::update()
 {
 	if(energy <= 0)
 		return false;
-	if(anchor_1 != NULL)
+	if(anchor_1 != 0)
 		energy -= anchor_1->feed();
 	
 	if(energy <= 0)
 		return false;
-	if(anchor_2 != NULL)
+	if(anchor_2 != 0)
 		energy -= anchor_2->feed();
 	
 	if(energy <= 0)
 		return false;
-	if(anchor_3 != NULL)
+	if(anchor_3 != 0)
 		energy -= anchor_3->feed();
 	
 	if(energy <= 0)
 		return false;
-	if(anchor_4 != NULL)
+	if(anchor_4 != 0)
 		energy -= anchor_4->feed();
 
 	return true;
@@ -121,16 +121,16 @@ bool food::update()
 // Release the bacteria attached to this food nugget when it is depleted:
 void food::release_bacteria()
 {
-	if(anchor_1 != NULL)
+	if(anchor_1 != 0)
 		anchor_1 = anchor_1->release();
 
-	if(anchor_2 != NULL)
+	if(anchor_2 != 0)
 		anchor_2 = anchor_2->release();
 	
-	if(anchor_3 != NULL)
+	if(anchor_3 != 0)
 		anchor_3 = anchor_3->release();
 	
-	if(anchor_4 != NULL)
+	if(anchor_4 != 0)
 		anchor_4 = anchor_4->release();
 }
 
@@ -168,7 +168,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 			{
 				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_1, ACCEPTABLE))
 				{
-					if(anchor_1 != NULL && anchor_1 != &temp)
+					if(anchor_1 != 0 && anchor_1 != &temp)
 						temp.release();
 					else {
 						anchor_1 = &temp;
@@ -177,7 +177,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 				}
 				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_2, ACCEPTABLE))
 				{
-					if(anchor_2 != NULL && anchor_2 != &temp)
+					if(anchor_2 != 0 && anchor_2 != &temp)
 						temp.release();
 					else {
 						anchor_2 = &temp;
@@ -186,7 +186,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 				}
 				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_3, ACCEPTABLE))
 				{
-					if(anchor_3 != NULL && anchor_3 != &temp)
+					if(anchor_3 != 0 && anchor_3 != &temp)
 						temp.release();
 					else {
 						anchor_3 = &temp;
@@ -195,7 +195,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 				}
 				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_4, ACCEPTABLE))
 				{
-					if(anchor_4 != NULL && anchor_4 != &temp)
+					if(anchor_4 != 0 && anchor_4 != &temp)
 						temp.release();
 					else {
 						anchor_4 = &temp;
