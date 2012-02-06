@@ -8,9 +8,10 @@ absolutely nothing to do with science.
 You can, however, graph the bacteria and food populations, using the
 plot_data.p GnuPlot script.
 
-Please note that the code is still undergoing revisions, as the code was pretty
-messy to begin with; the application should, however, build and run without
-trouble.
+Bacteria started out as a quick hack, and it is pretty obvious looking at the
+code that it is still a wonder that it works as well as it does. However, it is
+undergoing constant maintenance to bring it up to date and make it more C++-
+like. Look out for const_casts and other weird stuff; this will be improved!
 
 Any bugs you encounter should be reported on http://github.com/skordal/bacteria.
 
