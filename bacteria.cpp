@@ -78,23 +78,23 @@ void bacteria::draw_energy(bool graphically)
 		e_bar.draw(speed.get_x() + BACTERIA_WIDTH, speed.get_y() + ((BACTERIA_HEIGHT - ENERGY_BAR_HEIGHT) / 2));
 	} else {
 #ifndef DISABLE_SDLTTF
-	char * text = new char[COORDS_MAXLEN + 1];
-	SDL_Surface * temp = NULL;
-	SDL_Rect destination;
+		char * text = new char[COORDS_MAXLEN + 1];
+		SDL_Surface * temp = NULL;
+		SDL_Rect destination;
 
-	snprintf(text, COORDS_MAXLEN, "%d", energy);
-	temp = TTF_RenderText_Solid(font, text, STATUS_TEXT_COLOR);
+		snprintf(text, COORDS_MAXLEN, "%d", energy);
+		temp = TTF_RenderText_Solid(font, text, STATUS_TEXT_COLOR);
 
-	assert(temp != NULL);
+		assert(temp != NULL);
 
-	destination.x = speed.get_x() + BACTERIA_WIDTH;
-	destination.y = speed.get_y();
+		destination.x = speed.get_x() + BACTERIA_WIDTH;
+		destination.y = speed.get_y();
 
-	SDL_BlitSurface(temp, NULL, screen, &destination);
+		SDL_BlitSurface(temp, NULL, screen, &destination);
 
-	delete[] text;
-	if(temp != NULL)
-		SDL_FreeSurface(temp);
+		delete[] text;
+		if(temp != NULL)
+			SDL_FreeSurface(temp);
 #endif
 	}
 }
