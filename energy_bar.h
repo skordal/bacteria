@@ -24,8 +24,8 @@ class energy_bar
 
 		energy_bar & operator+=(int energy);
 
-		void operator++(int);
-		void operator--(int);
+		energy_bar & operator++();
+		energy_bar & operator--();
 	private:
 		int max_energy, current_energy;
 };

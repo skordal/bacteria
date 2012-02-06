@@ -66,13 +66,15 @@ energy_bar & energy_bar::operator+=(int energy)
 	return *this;
 }
 
-void energy_bar::operator++(int)
+energy_bar & energy_bar::operator++()
 {
 	current_energy++;
+	return *this;
 }
 
-void energy_bar::operator--(int)
+energy_bar & energy_bar::operator--()
 {
 	current_energy--;
+	return *this;
 }
 

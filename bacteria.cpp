@@ -105,11 +105,15 @@ bool bacteria::update()
 	coordinate_pair_t bacteria_center = {speed.get_x() + BACTERIA_CENTER_X, speed.get_y() + BACTERIA_CENTER_Y};
 	float temp_food_dist;
 
-	energy--;
-	e_bar--;
+	// Reduce the bacteria's energy supply:
+	--energy;
+	--e_bar;
+
+	// Check if it died due to lack of energy:
 	if(energy <= 0)
 		alive = false;
 
+	// Return if we should not move:
 	if(at_food || !alive)
 		return alive;
 
