@@ -7,8 +7,9 @@
 #define APPLICATION_H
 
 #include <cstdlib>
-#include <cstdio>
 #include <ctime>
+
+#include <iostream>
 
 #include <SDL.h>
 #include <getopt.h>
