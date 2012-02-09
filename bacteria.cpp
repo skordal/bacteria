@@ -44,28 +44,28 @@ void bacteria::draw()
 	position.x = floorf(speed.get_x());
 	position.y = floorf(speed.get_y());
 
-	SDL_BlitSurface(bacteria_image->get_image(), NULL, screen, &position);
+	SDL_BlitSurface(bacteria_image->get_image(), 0, screen, &position);
 }
 
 void bacteria::draw_coords()
 {
 #ifndef DISABLE_SDLTTF
 	char * text = new char[COORDS_MAXLEN + 1];
-	SDL_Surface * temp = NULL;
+	SDL_Surface * temp = 0;
 	SDL_Rect destination;
 
 	snprintf(text, COORDS_MAXLEN, "(%.2f, %.2f)", speed.get_x(), speed.get_y());
 	temp = TTF_RenderText_Solid(font, text, STATUS_TEXT_COLOR);
 
-	assert(temp != NULL);
+	assert(temp != 0);
 
 	destination.x = speed.get_x() + BACTERIA_WIDTH;
 	destination.y = speed.get_y();
 
-	SDL_BlitSurface(temp, NULL, screen, &destination);
+	SDL_BlitSurface(temp, 0, screen, &destination);
 
 	delete[] text;
-	if(temp != NULL)
+	if(temp != 0)
 		SDL_FreeSurface(temp);
 #endif
 }
@@ -79,21 +79,21 @@ void bacteria::draw_energy(bool graphically)
 	} else {
 #ifndef DISABLE_SDLTTF
 		char * text = new char[COORDS_MAXLEN + 1];
-		SDL_Surface * temp = NULL;
+		SDL_Surface * temp = 0;
 		SDL_Rect destination;
 
 		snprintf(text, COORDS_MAXLEN, "%d", energy);
 		temp = TTF_RenderText_Solid(font, text, STATUS_TEXT_COLOR);
 
-		assert(temp != NULL);
+		assert(temp != 0);
 
 		destination.x = speed.get_x() + BACTERIA_WIDTH;
 		destination.y = speed.get_y();
 
-		SDL_BlitSurface(temp, NULL, screen, &destination);
+		SDL_BlitSurface(temp, 0, screen, &destination);
 
 		delete[] text;
-		if(temp != NULL)
+		if(temp != 0)
 			SDL_FreeSurface(temp);
 #endif
 	}
@@ -169,7 +169,7 @@ bacteria * bacteria::release(bool new_dir)
 		speed.set_magnitude(drand48() * (random() % 2) + 1);
 	}
 
-	return NULL;
+	return 0;
 }
 
 void bacteria::set_destination(coordinate_pair_t destination)
