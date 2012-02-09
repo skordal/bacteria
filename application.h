@@ -52,6 +52,10 @@ class application
 		bool init_populations();
 		bool init_timers();
 
+		// Functions used for handling events:
+		void handle_update();
+		void handle_key(SDLKey key);
+
 		void display_help();
 		void display_version();
 
@@ -62,6 +66,7 @@ class application
 		char * config_filename;
 		bool display_coords, display_energy;
 		bool display_stats, graphical_energy_bar;
+		bool running;
 
 		logger * data_logger;
 		statistics * stats;

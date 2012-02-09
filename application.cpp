@@ -58,6 +58,7 @@ application::application()
 	display_energy = false;
 	display_stats = true;
 	graphical_energy_bar = true;
+	running = true;
 	
 	starting_pop = STARTING_POP;
 	starting_food = STARTING_FOOD;
@@ -265,16 +266,13 @@ bool application::init_populations()
 	// Create bacteria:
 	printf("Creating initial population...\n");
 	for(int c = 0; c < config->get_int_value("StartingPopulation"); c++)
-	{
 		bacteria_list.push_back(bacteria());
-	}
 
 	// Create food:
 	printf("Creating initial food nugget amount...\n");
 	for(int c = 0; c < config->get_int_value("StartingFood"); c++)
-	{
-		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH), random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
-	}
+		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
+			random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
 
 	return true;
 }
@@ -284,7 +282,8 @@ bool application::init_timers()
 {
 	printf("Starting timers...\n");
 	refresh_timer = SDL_AddTimer(1000 / config->get_int_value("FramesPerSecond"), timer_callback, 0);
-	logger_timer = SDL_AddTimer(config->get_int_value("LoggerUpdateInterval"), logger_timer_cb, (void *) data_logger);
+	logger_timer = SDL_AddTimer(config->get_int_value("LoggerUpdateInterval"),
+		logger_timer_cb, (void *) data_logger);
 	
 	return true;
 }
@@ -301,134 +300,10 @@ int application::run()
 		switch(event_queue.type)
 		{
 			case SDL_USEREVENT: // SDL_USEREVENT = Update timer has fired
-				counter++;
-
-				// Clear the screen:
-				SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B));
-
-				// Check if it's time for a new food nugget to spawn:
-				if(counter >= config->get_int_value("FoodSpawningRate") && !stats->get_game_over())
-				{
-					counter = 0;
-					food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH), random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
-					stats->add_food();
-				}
-
-				// Draw food:
-				if(!food_list.empty())
-				{
-					for(food_iterator = food_list.begin(); food_iterator != food_list.end();)
-					{
-						food & temp = *food_iterator;
-						if(!bacteria_list.empty())
-						{
-							if(!temp.update())
-							{
-								temp.release_bacteria();
-								food_iterator = food_list.erase(food_iterator);
-								stats->remove_food();
-								continue;
-							}
-						}
-
-						// Check for attached bacteria and let them feed:
-						temp.check_for_bacteria(bacteria_list);
-
-						temp.draw();
-						food_iterator++;
-					}
-				}
-
-				// Draw bacteria:
-				if(!bacteria_list.empty())
-				{
-					for(bacteria_iterator = bacteria_list.begin(); bacteria_iterator != bacteria_list.end();)
-					{
-						bacteria & temp = *bacteria_iterator;
-
-						if(temp.can_reproduce()) // Reproduce if possible:
-						{
-							temp.reproduce();
-							spawn_list.push_back(bacteria(temp.get_vector().get_angle() + M_PI,
-								temp.get_vector().get_magnitude(), temp.get_vector().get_x(),
-								temp.get_vector().get_y(), REPRODUCTION_ENERGY / 2,
-								temp.get_generation() + 1));
-							stats->add_bacteria(spawn_list.back().get_generation());
-						}
-
-						// Remove dead bacteria:
-						if(!temp.update())
-						{
-							stats->remove_bacteria();
-							bacteria_iterator = bacteria_list.erase(bacteria_iterator);
-							continue;
-						}
-
-						// Draw bacteria and any annotations attached to it:
-						temp.draw();
-						if(display_coords)
-							temp.draw_coords();
-						if(display_energy)
-							temp.draw_energy(graphical_energy_bar);
-						bacteria_iterator++;
-					}
-				} else
-					stats->set_game_over();
-
-				// Insert new bacteria to the main bacteria list:
-				bacteria_list.insert(bacteria_list.end(), spawn_list.begin(), spawn_list.end());
-				spawn_list.clear();
-
-				// Update and draw statistics:
-				stats->update();
-				if(display_stats)
-					stats->draw();
-
-				SDL_Flip(screen);
+				handle_update();
 				break;
 			case SDL_KEYDOWN:
-				switch(event_queue.key.keysym.sym)
-				{
-					case SDLK_b: // B - Add new bacteria
-						bacteria_list.push_back(bacteria());
-						stats->add_bacteria();
-						break;
-					case SDLK_f: // F - Add food nugget
-						food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH), random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
-						stats->add_food();
-						break;
-					case SDLK_e: // E - Toggle energy bar for bacteria
-						if(display_energy)
-							display_energy = false;
-						else
-							display_energy = true;
-						break;
-#ifndef DISABLE_TTF
-					case SDLK_c: // C - Toggle display of coordinates of bacteria
-						if(display_coords)
-							display_coords = false;
-						else
-							display_coords = true;
-						break;
-					case SDLK_s: // S - Toggle statistics
-						if(display_stats)
-							display_stats = false;
-						else
-							display_stats = true;
-						break;
-					case SDLK_t: // T - Toggle graphical or text energy display
-						if(graphical_energy_bar)
-							graphical_energy_bar = false;
-						else
-							graphical_energy_bar = true;
-						break;
-#endif
-					case SDLK_ESCAPE: // ESCAPE, Q - Exit application
-					case SDLK_q:
-						running = false;
-					default:
-						break;
-				}
+				handle_key(event_queue.key.keysym.sym);
 				break;
 			case SDL_QUIT:
 				running = false;
@@ -443,13 +318,14 @@ int application::run()
 // Find a file in the application's data directory:
 char * application::find_file(const char * filename)
 {
-	char * current_search_path;
+	const char * current_search_path;
 	for(int c = 0; image_search_path[c] != 0; c++)
 	{
 		char * temp = new char[MAX_PATHLEN];
-		current_search_path = const_cast<char *>(image_search_path[c]);
+		current_search_path = image_search_path[c];
 		strncpy(temp, image_search_path[c], MAX_PATHLEN);
 		strncat(temp, filename, MAX_PATHLEN - (strlen(temp) + 1));
+
 		if(access(temp, F_OK) == 0)
 		{
 			return temp;
@@ -459,6 +335,141 @@ char * application::find_file(const char * filename)
 
 	printf("File not found: %s\n", filename);
 	return 0;
+}
+
+// Handles an update event:
+void application::handle_update()
+{
+	counter++;
+
+	// Clear the screen:
+	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B));
+
+	// Check if it's time for a new food nugget to spawn:
+	if(counter >= config->get_int_value("FoodSpawningRate") && !stats->get_game_over())
+	{
+		counter = 0;
+		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH), random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+		stats->add_food();
+	}
+
+	// Draw food:
+	if(!food_list.empty())
+	{
+		for(food_iterator = food_list.begin(); food_iterator != food_list.end();)
+		{
+			food & temp = *food_iterator;
+			if(!bacteria_list.empty())
+			{
+				if(!temp.update())
+				{
+					temp.release_bacteria();
+					food_iterator = food_list.erase(food_iterator);
+					stats->remove_food();
+					continue;
+				}
+			}
+
+			// Check for attached bacteria and let them feed:
+			temp.check_for_bacteria(bacteria_list);
+
+			temp.draw();
+			food_iterator++;
+		}
+	}
+
+	// Draw bacteria:
+	if(!bacteria_list.empty())
+	{
+		for(bacteria_iterator = bacteria_list.begin(); bacteria_iterator != bacteria_list.end();)
+		{
+			bacteria & temp = *bacteria_iterator;
+
+			if(temp.can_reproduce()) // Reproduce if possible:
+			{
+				temp.reproduce();
+				spawn_list.push_back(bacteria(temp.get_vector().get_angle() + M_PI,
+					temp.get_vector().get_magnitude(), temp.get_vector().get_x(),
+					temp.get_vector().get_y(), REPRODUCTION_ENERGY / 2,
+					temp.get_generation() + 1));
+				stats->add_bacteria(spawn_list.back().get_generation());
+			}
+
+			// Remove dead bacteria:
+			if(!temp.update())
+			{
+				stats->remove_bacteria();
+				bacteria_iterator = bacteria_list.erase(bacteria_iterator);
+				continue;
+			}
+
+			// Draw bacteria and any annotations attached to it:
+			temp.draw();
+			if(display_coords)
+				temp.draw_coords();
+			if(display_energy)
+				temp.draw_energy(graphical_energy_bar);
+			bacteria_iterator++;
+		}
+	} else
+		stats->set_game_over();
+
+	// Insert new bacteria to the main bacteria list:
+	bacteria_list.insert(bacteria_list.end(), spawn_list.begin(), spawn_list.end());
+	spawn_list.clear();
+
+	// Update and draw statistics:
+	stats->update();
+	if(display_stats)
+		stats->draw();
+
+	SDL_Flip(screen);
+}
+
+// Handles a keyboard press:
+void application::handle_key(SDLKey key)
+{
+	switch(key)
+	{
+		case SDLK_b: // B - Add new bacteria
+			bacteria_list.push_back(bacteria());
+			stats->add_bacteria();
+			break;
+		case SDLK_f: // F - Add food nugget
+			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH), random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+			stats->add_food();
+			break;
+		case SDLK_e: // E - Toggle energy bar for bacteria
+			if(display_energy)
+				display_energy = false;
+			else
+				display_energy = true;
+			break;
+
+		case SDLK_c: // C - Toggle display of coordinates of bacteria
+			if(display_coords)
+				display_coords = false;
+			else
+				display_coords = true;
+			break;
+		case SDLK_s: // S - Toggle statistics
+			if(display_stats)
+				display_stats = false;
+			else
+				display_stats = true;
+			break;
+		case SDLK_t: // T - Toggle graphical or text energy display
+			if(graphical_energy_bar)
+				graphical_energy_bar = false;
+			else
+				graphical_energy_bar = true;
+			break;
+		case SDLK_ESCAPE: // ESCAPE, Q - Exit application
+		case SDLK_q:
+			running = false;
+		default:
+			break;
+	}
 }
 
 // Display the command line usage information for the application:
