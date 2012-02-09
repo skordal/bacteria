@@ -49,22 +49,11 @@ static struct option cmd_options[] = {
 };
 
 application::application()
+	: config_filename(0), window_icon(0), display_coords(false), display_energy(false),
+	  display_stats(true), graphical_energy_bar(true), running(true),
+	  starting_pop(STARTING_POP), starting_food(STARTING_FOOD),
+	  logging_interval(LOGGER_UPDATE_INTERVAL)
 {
-	config_filename = 0;
-	window_icon = 0;
-	printf("Bacteria %d.%d - (c) Kristian K. Skordal 2009\n\n", VERSION_MAJOR, VERSION_MINOR);
-
-	display_coords = false;
-	display_energy = false;
-	display_stats = true;
-	graphical_energy_bar = true;
-	running = true;
-	
-	starting_pop = STARTING_POP;
-	starting_food = STARTING_FOOD;
-	logging_interval = LOGGER_UPDATE_INTERVAL;
-	screen_x = SCREEN_WIDTH;
-	screen_y = SCREEN_HEIGHT;
 }
 
 // This function initializes the application by running
@@ -106,8 +95,6 @@ bool application::init(int argc, char * argv[])
 // This function parses the command line arguments:
 bool application::init_cmd_args(int argc, char * argv[])
 {
-	printf("Parsing command line arguments...\n");
-
 	while((option = getopt_long(argc, argv, opt_string, cmd_options, 0)) != -1)
 	{
 		switch(option)
@@ -207,8 +194,14 @@ bool application::init_sdl()
 	}
 #endif
 
-	printf("Creating main window (%d x %d)...\n", config->get_int_value("ScreenWidth"), config->get_int_value("ScreenHeight"));
-	screen = SDL_SetVideoMode(config->get_int_value("ScreenWidth"), config->get_int_value("ScreenHeight"), 0, config->get_bool_value("Fullscreen") ? SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN : SDL_HWSURFACE|SDL_DOUBLEBUF);
+	printf("Creating main window (%d x %d)...\n", config->get_int_value("ScreenWidth"),
+		config->get_int_value("ScreenHeight"));
+	screen = SDL_SetVideoMode(config->get_int_value("ScreenWidth"),
+		config->get_int_value("ScreenHeight"), 0,
+		config->get_bool_value("Fullscreen") ?
+			SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN
+			: SDL_HWSURFACE|SDL_DOUBLEBUF);
+
 	if(screen == 0)
 	{
 		printf("Could not create main window!\n");
@@ -221,7 +214,8 @@ bool application::init_sdl()
 	window_icon = SDL_LoadBMP(ICON_FILENAME);
 	if(window_icon != 0)
 	{
-		SDL_SetColorKey(window_icon, SDL_SRCCOLORKEY, SDL_MapRGB(window_icon->format, 255, 0, 255));
+		SDL_SetColorKey(window_icon, SDL_SRCCOLORKEY,
+			SDL_MapRGB(window_icon->format, 255, 0, 255));
 		SDL_WM_SetIcon(window_icon, 0);
 	} else
 		printf("WARNING: Could not load icon file: \"%s\"\n", ICON_FILENAME);
@@ -233,10 +227,12 @@ bool application::init_sdl()
 bool application::init_logging()
 {
 	printf("Creating status text object...\n");
-	stats = new statistics(config->get_int_value("StartingPopulation"), config->get_int_value("StartingFood"));
+	stats = new statistics(config->get_int_value("StartingPopulation"),
+		config->get_int_value("StartingFood"));
 
 	printf("Creating data logger object...\n");
-	data_logger = new logger(stats, config->get_string_value("DatalogFilename"), config->get_int_value("LoggerUpdateInterval"));
+	data_logger = new logger(stats, config->get_string_value("DatalogFilename"),
+		config->get_int_value("LoggerUpdateInterval"));
 
 	return true;
 }
@@ -292,7 +288,6 @@ bool application::init_timers()
 int application::run()
 {
 	SDL_Event event_queue;
-	bool running = true;
 
 	// Parse events:
 	while(SDL_WaitEvent(&event_queue) && running)
@@ -349,7 +344,8 @@ void application::handle_update()
 	if(counter >= config->get_int_value("FoodSpawningRate") && !stats->get_game_over())
 	{
 		counter = 0;
-		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH), random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
+			random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
 		stats->add_food();
 	}
 
@@ -385,7 +381,8 @@ void application::handle_update()
 		{
 			bacteria & temp = *bacteria_iterator;
 
-			if(temp.can_reproduce()) // Reproduce if possible:
+			// Reproduce if possible:
+			if(temp.can_reproduce())
 			{
 				temp.reproduce();
 				spawn_list.push_back(bacteria(temp.get_vector().get_angle() + M_PI,
@@ -411,7 +408,7 @@ void application::handle_update()
 				temp.draw_energy(graphical_energy_bar);
 			bacteria_iterator++;
 		}
-	} else
+	} else // if the bacteria list is empty, the simulation ends:
 		stats->set_game_over();
 
 	// Insert new bacteria to the main bacteria list:
@@ -436,7 +433,8 @@ void application::handle_key(SDLKey key)
 			stats->add_bacteria();
 			break;
 		case SDLK_f: // F - Add food nugget
-			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH), random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
+				random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
 			stats->add_food();
 			break;
 		case SDLK_e: // E - Toggle energy bar for bacteria
@@ -494,7 +492,7 @@ void application::display_version()
 // Clean up memory for the application:
 application::~application()
 {
-	printf("Cleaning up memory mess...\n");
+	printf("Cleaning up...\n");
 
 	// Remove timers:
 	SDL_RemoveTimer(refresh_timer);

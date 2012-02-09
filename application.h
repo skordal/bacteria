@@ -62,7 +62,6 @@ class application
 		// Variables:
 		int option, counter, logging_interval;
 		int starting_pop, starting_food;
-		int screen_x, screen_y;
 		char * config_filename;
 		bool display_coords, display_energy;
 		bool display_stats, graphical_energy_bar;
