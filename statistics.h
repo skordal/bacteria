@@ -11,7 +11,6 @@
 #include <sstream>
 
 #include <ctime>
-
 #include <SDL.h>
 
 #include "config_db.h"
