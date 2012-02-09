@@ -6,14 +6,12 @@
 #ifndef CONFIG_PARSER_H
 #define CONFIG_PARSER_H
 
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-
-#include <assert.h>
-#include <ctype.h>
-
-#include <unistd.h>
+#include <algorithm>
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <string>
+#include <sstream>
 
 #include "config.h"
 #include "config_db.h"
@@ -21,14 +19,14 @@
 class config_parser
 {
 	public:
-		config_parser(config_db * cfg, const char * filename);
-		~config_parser();
+		config_parser(config_db * config, const std::string & filename);
 
 		bool parse();
 		static bool config_file_exists(const char * filename);
 	private:
 		FILE * config_file;
 		config_db * config;
+		std::string filename;
 };
 
 #endif

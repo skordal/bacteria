@@ -144,18 +144,14 @@ bool application::init_config()
 
 	if(config_filename != 0)
 	{
-		if(config_parser::config_file_exists(config_filename))
-		{
-			printf("Using configuration file %s...\n", config_filename);
-			config_file = new config_parser(config, config_filename);
-			if(!config_file->parse())
-			{	
-				printf("Error while reading configuration file!\n");
-				delete[] config_filename;
-				return false;
-			}
-		 } else
-			printf("Cannot access \"%s\", continuing without...\n", config_filename);
+		printf("Using configuration file %s...\n", config_filename);
+		config_file = new config_parser(config, config_filename);
+		if(!config_file->parse())
+		{	
+			printf("Error while reading configuration file!\n");
+			delete[] config_filename;
+			return false;
+		}
 		delete[] config_filename;
 	}
 

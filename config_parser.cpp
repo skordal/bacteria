@@ -5,124 +5,122 @@
 
 #include "config_parser.h"
 
-config_parser::config_parser(config_db * cfg, const char * filename)
-{
-	assert(filename != NULL);
-	assert(cfg != NULL);
+using namespace std;
 
-	config_file = fopen(filename, "r");
-	config = cfg;
+config_parser::config_parser(config_db * config, const string & filename)
+	: config(config), filename(filename)
+{
+	assert(!filename.empty());
+	assert(config != NULL);
 }
 
 bool config_parser::parse()
 {
-	char * in_string, * temp, * delim, * value, * name;
-	config_type_t value_type;
-	union {
-		int int_val;
-		float float_val;
-		bool bool_val;
-		char * string_val;
-	};
-	int current_line = 1;
+	ifstream config_file(filename.c_str(), ios::in);
+	string input_line;
+	int line_number = 0;
 
-	if(config_file == NULL)
+	if(!config_file.good())
 	{
-		printf("Could not open configuration file!\n");
+		cerr << "ERROR: Could not open configuration file: " << filename << endl;
 		return false;
 	}
 
-	while(!feof(config_file))
+	while(config_file.good() && !config_file.eof())
 	{
-		in_string = new char[CONFIG_LINE_MAXLEN];
-		in_string = fgets(in_string, CONFIG_LINE_MAXLEN, config_file);
+		size_t equal_sign_index;
 
-		if(in_string == NULL)
+		string attribute_name;
+		string attribute_value;
+
+		getline(config_file, input_line);
+		++line_number;
+
+		// Check for empty lines or comments:
+		if(input_line.length() == 0 || input_line.at(0) == '\n' || input_line.at(0) == '\r'
+			|| input_line.at(0) == '#')
+			continue;
+
+		equal_sign_index = input_line.find_first_of('=');
+		if(equal_sign_index == string::npos)
 		{
-			delete[] in_string;
-			if(!feof(config_file))
-			{
-				printf("An error occurred while reading line %d of the config file!\n", current_line);
-				return false;
-			} else
-				break;
+			cerr << "ERROR: Missing assignment on line " << input_line << endl;
+			return false;
 		}
-	
-		temp = new char[CONFIG_LINE_MAXLEN];
-		int t = 0;
 
-		for(int c = 0; c < strnlen(in_string, CONFIG_LINE_MAXLEN); c++)
+		size_t name_start = input_line.find_first_not_of(" \t");
+		if(name_start == string::npos && input_line[name_start] == '=')
 		{
-			if(!isspace(in_string[c]))
-			{
-				temp[t] = in_string[c];
-				t++;
-			}
+			cerr << "ERROR: Missing attribute name on line " << input_line << endl;
+			return false;
 		}
-		delete[] in_string;
 
-		temp[t] = '\0';
-		if(strlen(temp) == 0 || temp[0] == '#')
-			goto _endline;
+		size_t name_end = input_line.find_first_of(" =\t", name_start);
+		if(name_end == string::npos)
+		{
+			// TODO: Find out if this can actually happen, despite the checks above.
+			cerr << "ERROR: End of attribute name not found on line " << input_line << endl;
+			return false;
+		}
 
-		delim = index(temp, '=');
+		attribute_name = input_line.substr(name_start, name_end);
 
-		temp[delim - temp] = '\0';
-		name = temp;
+		size_t value_start = input_line.find_first_not_of(" \t", equal_sign_index + 1);
+		if(value_start == string::npos)
+		{
+			cerr << "ERROR: No value found for attribute " << attribute_name << " on line "
+				<< input_line << endl;
+			return false;
+		}
 
-		value_type = config_db::get_type(name);
-		value = delim + 1;
+		size_t value_end = input_line.find_first_of("\n\r\t ", value_start);
 
-		switch(value_type)
+		attribute_value = input_line.substr(value_start, value_end);
+
+		// Check the name and type of the parsed attribute and value:
+		config_type_t type = config_db::get_type(attribute_name);
+		if(type == TYPE_INVALID)
+		{
+			cerr << "ERROR: Unrecognized attribute name: " << attribute_name << " on line "
+				<< input_line << endl;
+			return false;
+		}
+
+		clog << attribute_name << " = " << attribute_value << endl;
+		istringstream value_extractor(attribute_value);
+
+		switch(type)
 		{
 			case TYPE_INTEGER:
-				int_val = atoi(value);
-				config->set_value(name, int_val);
-				break;
-			case TYPE_BOOLEAN:
-				if(strncasecmp(value, "true", strlen(value)) == 0)
-					bool_val = true;
-				else if(strncasecmp(value, "false", strlen(value)) == 0)
-					bool_val = false;
-				else {
-					printf("Line %d: Value is not a boolean!\n", current_line);
-					delete[] temp;
-					return false;
-				}
-				config->set_value(name, bool_val);
+				int intval;
+				value_extractor >> intval;
+				config->set_value(attribute_name, intval);
 				break;
 			case TYPE_FLOAT:
-				float_val = atof(value);
-				config->set_value(name, float_val);
+				float floatval;
+				value_extractor >> floatval;
+				config->set_value(attribute_name, floatval);
+				break;
+			case TYPE_BOOLEAN:
+				transform(attribute_value.begin(), attribute_value.end(),
+					attribute_value.begin(), ptr_fun<int, int>(tolower));
+				if(input_line == "true")
+					config->set_value(attribute_name, true);
+				else if(input_line == "false")
+					config->set_value(attribute_name, false);
+				else {
+					cerr << "ERROR: Unrecognized boolean value for attribute " << attribute_name
+						<< " on line " << input_line << endl;
+					return false;
+				}
 				break;
 			case TYPE_STRING:
-				config->set_value(name, value);
-				break;
-			default:
-				printf("Line %d: Invalid key name \"%s\"\n", current_line, name);
+				config->set_value(attribute_name, attribute_value.c_str());
 				break;
 		}
-
-_endline:
-		delete[] temp;
-		current_line++;
 	}
 
+	config_file.close();
 	return true;
-}
-
-bool config_parser::config_file_exists(const char * filename)
-{
-	assert(filename != NULL);
-
-	if(access(filename, R_OK) != 0)
-		return false;
-	return true;
-}
-
-config_parser::~config_parser()
-{
-	if(config_file != NULL)
-		fclose(config_file);
 }
 
