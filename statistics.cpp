@@ -48,10 +48,11 @@ void statistics::draw()
 	stringstream message_buffer;
 
 	// Upper statistics display:
-	message_buffer << "Bacteria: " << setfill('0') << setw(2) << bacteria
-		<< " | Food nuggets: " << setw(2) << food
-		<< " | Most bacteria: " << setw(2) << peak_pop
-		<< " | Most food: " << setw(2) << peak_food
+	message_buffer
+		<< "Bacteria: " << setfill('0') << setw(bacteria_digits) << bacteria
+		<< " | Food nuggets: " << setw(food_digits) << food
+		<< " | Most bacteria: " << setw(peak_bacteria_digits) << peak_pop
+		<< " | Most food: " << setw(peak_food_digits) << peak_food
 		<< " | Running time: "
 			<< setw(3) << running_hours << " h, "
 			<< setw(2) << running_minutes << " m, "

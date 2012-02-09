@@ -39,6 +39,12 @@ class statistics
 
 		int get_bacteria() const { return bacteria; }
 		int get_food() const { return food; }
+
+		// Number of digits for some statistics:
+		static const int bacteria_digits = 3;
+		static const int food_digits = 3;
+		static const int peak_bacteria_digits = 3;
+		static const int peak_food_digits = 3;
 	private:
 		void calc_avg_growth();
 
