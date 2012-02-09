@@ -1,6 +1,6 @@
 /*************************************************/
 /* Bacteria - The interesting bacteria simulator */
-/*      (c) Kristian K. Skordal 2009 - 2011      */
+/*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
 #ifdef DEFAULT_CONFIG_H

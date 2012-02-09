@@ -1,6 +1,6 @@
 /*************************************************/
 /* Bacteria - The interesting bacteria simulator */
-/*      (c) Kristian K. Skordal 2009 - 2011      */
+/*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
 #include "application.h"
@@ -486,7 +486,7 @@ void application::display_help()
 void application::display_version()
 {
 	printf("Bacteria Simulator, version %d.%d\n", VERSION_MAJOR, VERSION_MINOR);
-	printf("(c) Kristian K. Skordal 2009 - 2011\n");
+	printf("(c) Kristian K. Skordal 2009 - 2012\n");
 }
 
 // Clean up memory for the application:

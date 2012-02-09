@@ -1,7 +1,7 @@
-/**************************************************/
-/* Bacteria -- The interesting bacteria simulator */
-/*      (c) Kristian K. Skordal 2009 - 2011      */
-/**************************************************/
+/*************************************************/
+/* Bacteria - The interesting bacteria simulator */
+/*      (c) Kristian K. Skordal 2009 - 2012      */
+/*************************************************/
 
 #ifndef FOOD_H
 #define FOOD_H
