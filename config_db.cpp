@@ -5,7 +5,7 @@
 
 #include "config_db.h"
 
-extern config_db * config; // Required for default_config.h
+#define CONFIG_DB_CPP
 #include "default_config.h"
 
 using namespace std;

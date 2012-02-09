@@ -3,10 +3,8 @@
 /*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
-#ifdef DEFAULT_CONFIG_H
-#	error "default_config.h should only be included once by config_db.h!"
-#else
-#	define DEFAULT_CONFIG_H
+#ifndef CONFIG_DB_CPP
+#	error "default_config.h should only be included in config_db.cpp!"
 #endif
 
 #include "config_db.h"
