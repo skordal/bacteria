@@ -65,7 +65,7 @@ void statistics::draw()
 
 // Lower statistics display:
 	snprintf(message_buffer, STATUS_MAXLEN,
-		"Last generation: %.3d | " \
+		"Latest generation: %.3d | " \
 		"Total bacteria created: %.7lld | " \
 		"Food nuggets eaten: %.7lld | dP/dt: %.2f",
 		max_gen, total_spawn, food_eaten, avg_growth);
