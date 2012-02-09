@@ -6,10 +6,11 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
 
-#include <cstdio>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+
 #include <ctime>
-#include <cerrno>
-#include <assert.h>
 
 #include <SDL.h>
 
@@ -24,7 +25,6 @@ class statistics
 {
 	public:
 		statistics(int bacteria = STARTING_POP, int food = STARTING_FOOD);
-		~statistics();
 
 		void update();
 		void draw();
@@ -42,10 +42,8 @@ class statistics
 		int get_food() const { return food; }
 	private:
 		void calc_avg_growth();
-		void update_exports(int s, int m, int h);
 
 		bool game_over, paused;
-		char * message_buffer;
 		int bacteria, food, peak_pop, peak_food, max_gen;
 		int last_pop;
 		int running_seconds, running_minutes;
