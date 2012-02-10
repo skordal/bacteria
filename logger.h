@@ -6,8 +6,12 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <cstdlib>
-#include <cstdio>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
+
+#include <ctime>
 
 #include "statistics.h"
 #include "config.h"
@@ -15,14 +19,15 @@
 class logger
 {
 	public:
-		logger(statistics * stat, const char * filename = DATALOG_FILENAME, int update_interval = LOGGER_UPDATE_INTERVAL);
+		logger(statistics * stats, const std::string & filename = DATALOG_FILENAME,
+			int update_interval = LOGGER_UPDATE_INTERVAL);
 		~logger();
 
 		void update();
 	private:
 		float current_time;
-		int commit_counter, interval, peak_pop;
-		FILE * logfile;
+		int interval, peak_pop;
+		std::ofstream logfile;
 		statistics * stats;
 };
 

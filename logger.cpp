@@ -5,21 +5,20 @@
 
 #include "logger.h"
 
-logger::logger(statistics * stat, const char * filename, int update_interval)
+using namespace std;
+
+logger::logger(statistics * stats, const string & filename, int update_interval)
+	: logfile(filename.c_str()), stats(stats), current_time(0.0f), interval(update_interval)
 {
-	time_t now = time(NULL);
+	time_t now = time(0);
 
-	logfile = fopen(filename, "w");
-	assert(logfile != NULL);
-
-	stats = stat;
-	current_time = 0.0f;
-	commit_counter = 0;
-	interval = update_interval;
-
-	fprintf(logfile, "# Bacteria population log\n");
-	fprintf(logfile, "# Generated automatically on %s", ctime(&now));
-	fprintf(logfile, "# Time (s)\tBacteria\tFood\n");
+	if(logfile.good())
+	{
+		logfile << "# Bacteria population log" << endl;
+		logfile << "# Generated automatically on " << ctime(&now) << endl;
+		logfile << "# Time (s)\tBacteria\tFood" << endl;
+	} else
+		cerr << "WARNING: Cannot write to log file!" << endl;
 }
 
 void logger::update()
@@ -31,19 +30,14 @@ void logger::update()
 	int current_bacteria = stats->get_bacteria();
 	int current_food = stats->get_food();
 
-	fprintf(logfile, "%.3f\t%d\t%d\n", current_time, current_bacteria, current_food);
-
-	if(commit_counter >= LOGGER_COMMIT_INTERVAL)
-	{
-		fflush(logfile);
-		commit_counter = 0;
-	} else
-		commit_counter ++;
+	if(logfile.good())
+		logfile << setprecision(3) << current_time << "\t"
+			<< current_bacteria << "\t" << current_food << endl;
 }
 
 logger::~logger()
 {
-	if(logfile != NULL)
-		fclose(logfile);
+	if(logfile.is_open())
+		logfile.close();
 }
 
