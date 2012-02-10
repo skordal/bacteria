@@ -18,9 +18,6 @@
 		(cur_pos.y >= (dest_pos.y - tolerance)) && \
 		(cur_pos.y <= (dest_pos.y + tolerance)))
 
-// Same as above, in pointer version:
-//#define AT_DESTINATION_P(cur_pos, dest_pos, tolerance) ((cur_pos->x >= (dest_pos->x - tolerance)) && (cur_pos->x <= (dest_pos->x + tolerance)) && (cur_pos->y >= (dest_pos->y - tolerance)) && (cur_pos->y <= (dest_pos.y + tolerance)))
-
 // Comparison of coordinate pairs:
 #define CMP_PAIR(pair_a, pair_b) \
 	((pair_a.x == pair_b.x) && (pair_a.y == pair_b.y))
