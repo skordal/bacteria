@@ -20,7 +20,6 @@ class config_parser
 {
 	public:
 		config_parser(config_db * config, const std::string & filename);
-		~config_parser();
 
 		bool parse();
 	private:

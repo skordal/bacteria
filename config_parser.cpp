@@ -124,7 +124,3 @@ bool config_parser::parse()
 	return true;
 }
 
-config_parser::~config_parser()
-{
-}
-
