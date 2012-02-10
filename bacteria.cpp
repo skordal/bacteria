@@ -158,7 +158,7 @@ int bacteria::feed()
 	return config->get_int_value("FeedingEnergy");
 }
 
-bacteria * bacteria::release(bool new_dir)
+void bacteria::release(bool new_dir)
 {
 	heading_for_food = false;
 	at_food = false;
@@ -168,8 +168,6 @@ bacteria * bacteria::release(bool new_dir)
 		speed.set_angle((double) (random() % 360) * (M_PI / 180.0f));
 		speed.set_magnitude(drand48() * (random() % 2) + 1);
 	}
-
-	return 0;
 }
 
 void bacteria::set_destination(coordinate_pair_t destination)

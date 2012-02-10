@@ -5,7 +5,7 @@
 
 #include "application.h"
 
-using std::list;
+using namespace std;
 
 // Global screen:
 SDL_Surface * screen;
@@ -86,8 +86,8 @@ bool application::init(int argc, char * argv[])
 	if(!init_timers())
 		return false;
 
-	printf("Initialization completed.\n");
-	printf("\n*** Now running ***\n\n");
+	clog << "Initialization completed." << endl;
+	clog << "*** Now running ***" << endl << endl;
 
 	return true;
 }
@@ -129,7 +129,7 @@ bool application::init_config()
 {
 	config_parser * config_file = 0;
 
-	printf("Reading configuration...\n");
+	clog << "Reading configuration..." << endl;
 	config = new config_db();
 
 	// Check if command line arguments override the default settings.
@@ -144,11 +144,10 @@ bool application::init_config()
 
 	if(config_filename != 0)
 	{
-		printf("Using configuration file %s...\n", config_filename);
+		clog << "Using configuration file " << config_filename << "..." << endl;
 		config_file = new config_parser(config, config_filename);
 		if(!config_file->parse())
 		{	
-			printf("Error while reading configuration file!\n");
 			delete[] config_filename;
 			return false;
 		}
@@ -164,34 +163,33 @@ bool application::init_config()
 // This function initializes the random number generator:
 bool application::init_random()
 {
-	printf("Initializing random number generator...\n");
+	clog << "Initializing random number generator..." << endl;
 	srandom(time(0));
-
 	return true;
 }
 
 // This function initializes SDL:
 bool application::init_sdl()
 {
-	printf("Initializing SDL...\n");
+	clog << "Initializing SDL..." << endl;
 	if(SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO) == -1)
 		return false;
 
 #ifndef DISABLE_SDLTTF
-	printf("Initializing SDL_ttf...\n");
+	clog << "Initializing SDL_ttf..." << endl;
 	if(TTF_Init() == -1)
 		return false;
 
 	font = TTF_OpenFont(STATUS_FONT, STATUS_FONT_SIZE);
 	if(font == 0)
 	{
-		printf("ERROR: Could not load font \"%s\"\n", STATUS_FONT);
+		cerr << "ERROR: Could not load font " << STATUS_FONT << endl;
 		return false;
 	}
 #endif
 
-	printf("Creating main window (%d x %d)...\n", config->get_int_value("ScreenWidth"),
-		config->get_int_value("ScreenHeight"));
+	clog << "Creating main window (" << config->get_int_value("ScreenWidth")
+		<< " x " << config->get_int_value("ScreenHeight") << ")..." << endl;
 	screen = SDL_SetVideoMode(config->get_int_value("ScreenWidth"),
 		config->get_int_value("ScreenHeight"), 0,
 		config->get_bool_value("Fullscreen") ?
@@ -200,11 +198,9 @@ bool application::init_sdl()
 
 	if(screen == 0)
 	{
-		printf("Could not create main window!\n");
+		cerr << "ERROR: Could not create main window!" << endl;
 		return false;
 	}
-
-	printf("Setting up window decorations...\n");
 	SDL_WM_SetCaption("Bacteria Simulator", "Bacteria");
 
 	window_icon = SDL_LoadBMP(ICON_FILENAME);
@@ -213,8 +209,8 @@ bool application::init_sdl()
 		SDL_SetColorKey(window_icon, SDL_SRCCOLORKEY,
 			SDL_MapRGB(window_icon->format, 255, 0, 255));
 		SDL_WM_SetIcon(window_icon, 0);
-	} else
-		printf("WARNING: Could not load icon file: \"%s\"\n", ICON_FILENAME);
+	} else 
+		cerr << "WARNING: Could not load icon file: " << ICON_FILENAME << endl;
 	
 	return true;
 }
@@ -222,11 +218,11 @@ bool application::init_sdl()
 // This function sets up data logging:
 bool application::init_logging()
 {
-	printf("Creating status text object...\n");
+	clog << "Initializing statistics..." << endl;
 	stats = new statistics(config->get_int_value("StartingPopulation"),
 		config->get_int_value("StartingFood"));
 
-	printf("Creating data logger object...\n");
+	clog << "Creating data logger..." << endl;
 	data_logger = new logger(stats, config->get_string_value("DatalogFilename"),
 		config->get_int_value("LoggerUpdateInterval"));
 
@@ -236,7 +232,7 @@ bool application::init_logging()
 // This function loads image files:
 bool application::init_graphics()
 {
-	printf("Loading graphics...\n");
+	clog << "Loading graphics..." << endl;
 	try {
 		bacteria_image = new image(BACTERIA_FILENAME, BACTERIA_ALPHA);
 		food_image = new image(FOOD_FILENAME, FOOD_ALPHA);
@@ -256,12 +252,12 @@ bool application::init_graphics()
 bool application::init_populations()
 {
 	// Create bacteria:
-	printf("Creating initial population...\n");
+	clog << "Creating initial bacteria population..." << endl;
 	for(int c = 0; c < config->get_int_value("StartingPopulation"); c++)
 		bacteria_list.push_back(bacteria());
 
 	// Create food:
-	printf("Creating initial food nugget amount...\n");
+	clog << "Creating initial food nuggets..." << endl;
 	for(int c = 0; c < config->get_int_value("StartingFood"); c++)
 		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
 			random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
@@ -272,7 +268,7 @@ bool application::init_populations()
 // This function starts the timers for screen updating and data logging:
 bool application::init_timers()
 {
-	printf("Starting timers...\n");
+	clog << "Starting timers..." << endl;
 	refresh_timer = SDL_AddTimer(1000 / config->get_int_value("FramesPerSecond"), timer_callback, 0);
 	logger_timer = SDL_AddTimer(config->get_int_value("LoggerUpdateInterval"),
 		logger_timer_cb, (void *) data_logger);
@@ -469,26 +465,27 @@ void application::handle_key(SDLKey key)
 // Display the command line usage information for the application:
 void application::display_help()
 {
-	printf("Bacteria command line options:\n");
-	printf("\t--bacteria\t-b\tSpecify starting population\n");
-	printf("\t--config\t-c\tSpecify which configuration file to use\n");
-	printf("\t--food\t-f\tSpecify starting food amount\n");
-	printf("\t--interval\t-i\tSpecify datalogger interval (in milliseconds)\n");
-	printf("\t--help\t-h\tDisplay this message\n");
-	printf("\t--version\t-v\tDisplay a version statement\n");
+	clog << "Bacteria command line options:" << endl;
+	clog << "\t--bacteria\t-b\tSpecify starting population" << endl;
+	clog << "\t--config\t-c\tSpecify which configuration file to use" << endl;
+	clog << "\t--food\t-f\tSpecify starting food amount" << endl;
+	clog << "\t--help\t-h\tDisplay this message" << endl;
+	clog << "\t--interval\t-i\tSpecify data logging interval (in milliseconds)" << endl;
+	clog << "\t--version\t-v\tDisplays a version statement" << endl;
 }
 
 // Display application version information:
 void application::display_version()
 {
-	printf("Bacteria Simulator, version %d.%d\n", VERSION_MAJOR, VERSION_MINOR);
-	printf("(c) Kristian K. Skordal 2009 - 2012\n");
+	clog << "Bacteria Simulator " << VERSION_MAJOR << '.' << VERSION_MINOR << endl;
+	clog << "(c) Kristian Klomsten Skordal 2009 - 2012 <kristian.skordal@gmail.com>" << endl;
+	clog << "Report bugs on <http://github.com/skordal/bacteria>" << endl;
 }
 
 // Clean up memory for the application:
 application::~application()
 {
-	printf("Cleaning up...\n");
+	clog << "Cleaning up..." << endl;
 
 	// Remove timers:
 	SDL_RemoveTimer(refresh_timer);

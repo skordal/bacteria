@@ -22,9 +22,7 @@ class config_parser
 		config_parser(config_db * config, const std::string & filename);
 
 		bool parse();
-		static bool config_file_exists(const char * filename);
 	private:
-		FILE * config_file;
 		config_db * config;
 		std::string filename;
 };

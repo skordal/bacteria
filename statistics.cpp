@@ -5,6 +5,8 @@
 
 #include "statistics.h"
 
+using namespace std;
+
 extern SDL_Surface * screen;
 extern config_db * config;
 
@@ -16,22 +18,21 @@ statistics::statistics(int bacteria, int food)
 	: bacteria(bacteria), food(food), game_over(false), paused(false),
 	peak_pop(bacteria), peak_food(food), total_spawn(bacteria),
 	food_eaten(food), avg_growth(0), last_pop(bacteria), max_gen(1),
-	starting_time(time(NULL)), running_seconds(0), running_minutes(0),
+	starting_time(time(0)), running_seconds(0), running_minutes(0),
 	running_hours(0)
 {
-	message_buffer = new char[STATUS_MAXLEN];
 }
 
 void statistics::update()
 {
 	if(!game_over && !paused)
-		running_time = difftime(time(NULL), starting_time);
+		running_time = difftime(time(0), starting_time);
 
 	running_seconds = running_time % 60;
-	running_minutes = (running_time - (running_time % 60)) / 60;
+	running_minutes = running_time / 60;
 	if(running_minutes >= 60)
 	{
-		running_hours = (running_minutes - (running_minutes % 60)) / 60;
+		running_hours = running_minutes / 60;
 		running_minutes = running_minutes % 60;
 	}
 
@@ -44,45 +45,49 @@ void statistics::draw()
 	SDL_Rect destination;
 
 #ifndef DISABLE_SDLTTF
-// Upper statistics display:
-	snprintf(message_buffer, STATUS_MAXLEN,
-		"Bacteria: %.2d | " \
-		"Food nuggets: %.2d | " \
-		"Most bacteria: %.2d | " \
-		"Most food: %.2d | " \
-		"Running time: %.3d h, %.2d m, %.2d s",
-		bacteria, food, peak_pop, peak_food, running_hours,
-		running_minutes, running_seconds);
+	stringstream message_buffer;
 
-	temp = TTF_RenderText_Solid(font, message_buffer, STATUS_TEXT_COLOR);
-	if(temp == NULL)
-		printf("WARNING: Could not render top text!\n");
+	// Upper statistics display:
+	message_buffer << "Bacteria: " << setfill('0') << setw(2) << bacteria
+		<< " | Food nuggets: " << setw(2) << food
+		<< " | Most bacteria: " << setw(2) << peak_pop
+		<< " | Most food: " << setw(2) << peak_food
+		<< " | Running time: "
+			<< setw(3) << running_hours << " h, "
+			<< setw(2) << running_minutes << " m, "
+			<< setw(2) << running_seconds << " s";
+
+	temp = TTF_RenderText_Solid(font, message_buffer.str().c_str(), STATUS_TEXT_COLOR);
+	if(temp == 0)
+		cerr << "WARNING: Could not render top text!" << endl;
 	else
-		SDL_BlitSurface(temp, NULL, screen, NULL);
+		SDL_BlitSurface(temp, 0, screen, 0);
 	
-	if(temp != NULL)
+	if(temp != 0)
 		SDL_FreeSurface(temp);
 
-// Lower statistics display:
-	snprintf(message_buffer, STATUS_MAXLEN,
-		"Latest generation: %.3d | " \
-		"Total bacteria created: %.7lld | " \
-		"Food nuggets eaten: %.7lld | dP/dt: %.2f",
-		max_gen, total_spawn, food_eaten, avg_growth);
+	// Lower statistics display:
+	message_buffer.str("Empty");
 
-	if(game_over)
-		strcat(message_buffer, " | SIMULATION ENDED.");
+	// Latest generation:
+	message_buffer << "Latest generation: " << setw(4) << max_gen
+		<< " | Total bacteria created: " << setw(7) << total_spawn
+		<< " | Food nuggets eaten: " << setw(7) << food_eaten
+		<< " | dP/dt: " << setprecision(3) << avg_growth;
 
-	temp = TTF_RenderText_Solid(font, message_buffer, STATUS_TEXT_COLOR);
-	if(temp == NULL)
-		printf("WARNING: Could not render bottom text!\n");
+//	if(game_over)
+//		message_buffer << " | SIMULATION ENDED.";
+
+	temp = TTF_RenderText_Solid(font, message_buffer.str().c_str(), STATUS_TEXT_COLOR);
+	if(temp == 0)
+		cerr << "WARNING: Could not render buttom text!" << endl;
 	else {
 		destination.x = 0;
 		destination.y = config->get_int_value("ScreenHeight") - temp->h;
-		SDL_BlitSurface(temp, NULL, screen, &destination);
+		SDL_BlitSurface(temp, 0, screen, &destination);
 	}
 
-	if(temp != NULL)
+	if(temp != 0)
 		SDL_FreeSurface(temp);
 #endif
 }
@@ -90,8 +95,8 @@ void statistics::draw()
 // Simply calculated from the current number of bacteria.
 void statistics::calc_avg_growth()
 {
-	static time_t prev_time = time(NULL);
-	time_t dt = difftime(time(NULL), prev_time);
+	static time_t prev_time = time(0);
+	time_t dt = difftime(time(0), prev_time);
 	int dP = bacteria - last_pop;
 
 	if(dt < config->get_int_value("GrowthRateSamplingInterval"))
@@ -124,10 +129,5 @@ void statistics::add_bacteria(int generation)
 	total_spawn++;
 	if(generation > max_gen)
 		max_gen = generation;
-}
-
-statistics::~statistics()
-{
-	delete[] message_buffer;
 }
 

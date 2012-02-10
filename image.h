@@ -6,11 +6,10 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include <iostream>
+#include <string>
+
 #include <SDL.h>
-#include <cstdlib>
-#include <assert.h>
-#include <climits>
-#include <unistd.h>
 
 #include "config.h"
 
@@ -19,10 +18,10 @@
 class image
 {
 	public:
-		image(const char * filename, int alpha = SDL_ALPHA_OPAQUE);
+		image(const std::string & filename, int alpha = SDL_ALPHA_OPAQUE);
 		~image();
 	
-		SDL_Surface * get_image();
+		SDL_Surface * get_image() const { return img; }
 	private:
 		SDL_Surface * img;
 };

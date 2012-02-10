@@ -13,9 +13,8 @@ extern config_db * config;
 extern SDL_Surface * screen;
 
 // Initializes the energy bar:
-energy_bar::energy_bar()
+energy_bar::energy_bar() : current_energy(0)
 {
-	current_energy = 0;
 	max_energy = config->get_int_value("ReproductionEnergy");
 }
 

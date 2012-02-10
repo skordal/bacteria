@@ -39,13 +39,13 @@ class bacteria
 		bool is_alive() const { return alive; }
 
 		int feed(); // Returns the energy eaten, used as assignment in food.cpp.
-		bacteria * release(bool newdir = true); // Returns NULL, always. Used as assignment in food.cpp.
+		void release(bool newdir = true);
 		void stop() { at_food = true; }
 
 		bool can_reproduce() const { return energy >= config->get_int_value("ReproductionEnergy"); }
 		void reproduce();
 
-		vector & get_vector() const { return const_cast<vector &>(speed); }
+		const vector & get_vector() const { return speed; }
 		int get_generation() const { return generation; }
 
 		void set_destination(coordinate_pair_t destination);

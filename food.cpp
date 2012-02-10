@@ -122,16 +122,28 @@ bool food::update()
 void food::release_bacteria()
 {
 	if(anchor_1 != 0)
-		anchor_1 = anchor_1->release();
+	{
+		anchor_1->release();
+		anchor_1 = 0;
+	}
 
 	if(anchor_2 != 0)
-		anchor_2 = anchor_2->release();
+	{
+		anchor_2->release();
+		anchor_2 = 0;
+	}
 	
 	if(anchor_3 != 0)
-		anchor_3 = anchor_3->release();
+	{
+		anchor_3->release();
+		anchor_3 = 0;
+	}
 	
 	if(anchor_4 != 0)
-		anchor_4 = anchor_4->release();
+	{
+		anchor_4->release();
+		anchor_4 = 0;
+	}
 }
 
 // This function checks for bacteria to attach to the food nugget.

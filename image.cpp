@@ -5,26 +5,21 @@
 
 #include "image.h"
 
-image::image(const char * filename, int alpha)
-{
-	assert(filename != NULL);
+using namespace std;
 
-	img = SDL_LoadBMP(filename);
+image::image(const string & filename, int alpha)
+{
+	assert(!filename.empty());
+
+	img = SDL_LoadBMP(filename.c_str());
 	if(img == NULL)
 	{
-		printf("ERROR: Could not load file \"%s\"!\n", filename);
+		cerr << "ERROR: Could not load file " << filename << "!" << endl;
 		throw IMAGE_ERROR_NOT_FOUND;
 	}
 
 	SDL_SetColorKey(img, SDL_SRCCOLORKEY, DEFAULT_COLOR_KEY(img));
 	SDL_SetAlpha(img, SDL_SRCALPHA, alpha);
-
-	delete[] filename;
-}
-
-SDL_Surface * image::get_image()
-{
-	return img;
 }
 
 image::~image()
