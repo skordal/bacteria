@@ -7,14 +7,11 @@
 
 int main(int argc, char * argv[])
 {
-	int retval = EXIT_SUCCESS;
-	application * app = new application();
+	application * app = application::init(argc, argv);
 
-	if(!app->init(argc, argv))
-		return EXIT_FAILURE;
-	retval = app->run();
-
-	delete app;
-	return retval;
+	if(app == 0)
+		return 1;
+	else
+		return app->run();
 }
 

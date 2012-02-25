@@ -24,6 +24,9 @@ config_db * config;
 list<bacteria> bacteria_list;
 list<food> food_list;
 
+// Global application object:
+application * application::global_app = 0;
+
 // Timer callback functions:
 Uint32 timer_callback(Uint32 interval, void * unused);
 Uint32 logger_timer_cb(Uint32 interval, void * logger_object);
@@ -49,7 +52,7 @@ static struct option cmd_options[] = {
 };
 
 application::application()
-	: config_filename(0), window_icon(0), display_coords(false), display_energy(false),
+	: config_filename(""), window_icon(0), display_coords(false), display_energy(false),
 	  display_stats(true), graphical_energy_bar(true), running(true),
 	  starting_pop(STARTING_POP), starting_food(STARTING_FOOD),
 	  logging_interval(LOGGER_UPDATE_INTERVAL)
@@ -58,38 +61,50 @@ application::application()
 
 // This function initializes the application by running
 // all the other initialization functions:
-bool application::init(int argc, char * argv[])
+application * application::init(int argc, char * argv[])
 {
-	config_parser * config_file = 0;
+	bool retval = true;
+	global_app = new application();
+	global_app->init_random();
 
-	if(!init_cmd_args(argc, argv))
-		return false;
+	if(!global_app->init_cmd_args(argc, argv))
+		retval = false;
 
-	if(!init_config())
-		return false;
+	if(!global_app->init_config())
+		retval = false;
 
-	if(!init_random())
-		return false;
-
-	if(!init_sdl())
-		return false;
+	if(!global_app->init_sdl())
+		retval = false;
 	
-	if(!init_graphics())
-		return false;
+	if(!global_app->init_graphics())
+		retval = false;
 	
-	if(!init_logging())
-		return false;
+	if(!global_app->init_logging())
+		retval = false;
 
-	if(!init_populations())
-		return false;
+	if(!global_app->init_populations())
+		retval = false;
 	
-	if(!init_timers())
-		return false;
+	if(!global_app->init_timers())
+		retval = false;
 
 	clog << "Initialization completed." << endl;
 	clog << "*** Now running ***" << endl << endl;
 
-	return true;
+	if(retval)
+	{
+		atexit(application::cleanup);
+		return global_app;
+	} else {
+		delete global_app;
+		return 0;
+	}
+}
+
+void application::cleanup()
+{
+	if(global_app != 0)
+		delete global_app;
 }
 
 // This function parses the command line arguments:
@@ -103,8 +118,7 @@ bool application::init_cmd_args(int argc, char * argv[])
 				starting_pop = atoi(optarg);
 				break;
 			case 'c':
-				config_filename = new char[strlen(optarg) + 1];
-				strcpy(config_filename, optarg);
+				config_filename = string(optarg);
 				break;
 			case 'f':
 				starting_food = atoi(optarg);
@@ -142,16 +156,12 @@ bool application::init_config()
 	if(logging_interval != config->get_int_value("LoggerUpdateInterval"))
 		config->set_value("LoggerUpdateInterval", logging_interval);
 
-	if(config_filename != 0)
+	if(!config_filename.empty())
 	{
 		clog << "Using configuration file " << config_filename << "..." << endl;
 		config_file = new config_parser(config, config_filename);
 		if(!config_file->parse())
-		{	
-			delete[] config_filename;
 			return false;
-		}
-		delete[] config_filename;
 	}
 
 	if(config_file != 0)
@@ -161,11 +171,10 @@ bool application::init_config()
 }
 
 // This function initializes the random number generator:
-bool application::init_random()
+void application::init_random()
 {
 	clog << "Initializing random number generator..." << endl;
 	srandom(time(0));
-	return true;
 }
 
 // This function initializes SDL:
@@ -299,7 +308,7 @@ int application::run()
 		}
 	}
 
-	return EXIT_SUCCESS;
+	return 0;
 }
 
 // Find a file in the application's data directory:

@@ -6,9 +6,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <cstdlib>
 #include <ctime>
-
 #include <iostream>
 
 #include <SDL.h>
@@ -38,15 +36,17 @@ class application
 		application();
 		~application();
 
-		bool init(int argc, char * argv[]);
+		static application * init(int argc, char * argv[]);
 		int run();
 
 		static char * find_file(const char * filename);
 	private:
+		static void cleanup();
+
 		// Initialization functions:
 		bool init_cmd_args(int argc, char * argv[]);
 		bool init_config();
-		bool init_random();
+		void init_random();
 		bool init_sdl();
 		bool init_graphics();
 		bool init_logging();
@@ -63,7 +63,7 @@ class application
 		// Variables:
 		int option, counter, logging_interval;
 		int starting_pop, starting_food;
-		char * config_filename;
+		std::string config_filename;
 		bool display_coords, display_energy;
 		bool display_stats, graphical_energy_bar;
 		bool running;
@@ -77,6 +77,8 @@ class application
 		std::list<bacteria> spawn_list;
 		std::list<bacteria>::iterator bacteria_iterator;
 		std::list<food>::iterator food_iterator;
+
+		static application * global_app;
 };
 
 #endif
