@@ -66,7 +66,7 @@ class application
 		void display_version();
 
 		// Variables:
-		int option, counter, logging_interval;
+		int logging_interval;
 		int starting_pop, starting_food;
 		std::string config_filename;
 		bool display_coords, display_energy;
@@ -79,7 +79,6 @@ class application
 		SDL_Surface * window_icon, * screen;
 		SDL_TimerID refresh_timer, logger_timer;
 
-		std::list<bacteria> spawn_list;
 		std::list<bacteria>::iterator bacteria_iterator;
 		std::list<food>::iterator food_iterator;
 

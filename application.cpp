@@ -107,6 +107,8 @@ void application::cleanup()
 // This function parses the command line arguments:
 bool application::init_cmd_args(int argc, char * argv[])
 {
+	int option;
+
 	while((option = getopt_long(argc, argv, opt_string, cmd_options, 0)) != -1)
 	{
 		switch(option)
@@ -327,6 +329,9 @@ const char * application::find_file(const char * filename)
 // Handles an update event:
 void application::handle_update()
 {
+	static int counter = 0;
+	std::list<bacteria> spawn_list;
+	
 	counter++;
 
 	// Clear the screen:
