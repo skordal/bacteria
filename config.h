@@ -11,20 +11,8 @@
 // Completely disable SDL_ttf (causes no statistics to be drawn):
 // #define DISABLE_SDLTTF 1
 
-// Enable many debugging statements from the config system:
-// #define CONFIG_DEBUGGING 1
-
 // Config file to read by default (NULL = no file):
 #define DEFAULT_CONFIG_FILE "default_config.cfg"
-
-// Maximum length of config file lines:
-#define CONFIG_LINE_MAXLEN 511
-
-// Maximum length of config key names (and values):
-#define CONFIG_KEY_MAXLEN 255
-
-// Maximum file path length:
-#define MAX_PATHLEN 255
 
 // Application version:
 #define VERSION_MAJOR 0

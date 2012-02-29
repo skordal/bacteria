@@ -39,7 +39,7 @@ class application
 		static application * init(int argc, char * argv[]);
 		int run();
 
-		static char * find_file(const char * filename);
+		static const char * find_file(const char * filename);
 	private:
 		static void cleanup();
 

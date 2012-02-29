@@ -312,24 +312,20 @@ int application::run()
 }
 
 // Find a file in the application's data directory:
-char * application::find_file(const char * filename)
+const char * application::find_file(const char * filename)
 {
 	const char * current_search_path;
 	for(int c = 0; image_search_path[c] != 0; c++)
 	{
-		char * temp = new char[MAX_PATHLEN];
+		string temp = image_search_path[c];
 		current_search_path = image_search_path[c];
-		strncpy(temp, image_search_path[c], MAX_PATHLEN);
-		strncat(temp, filename, MAX_PATHLEN - (strlen(temp) + 1));
+		temp += filename;
 
-		if(access(temp, F_OK) == 0)
-		{
-			return temp;
-		} else
-			delete[] temp;
+		if(access(temp.c_str(), F_OK) == 0)
+			return temp.c_str();
 	}
 
-	printf("File not found: %s\n", filename);
+	cerr << "ERROR: File not found: " << filename << endl;
 	return 0;
 }
 
