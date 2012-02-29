@@ -74,17 +74,16 @@ void bacteria::draw_coords()
 void bacteria::draw_energy(bool graphically)
 {
 	if(graphically)
-	{
 		e_bar.draw(speed.get_x() + BACTERIA_WIDTH,
 			speed.get_y() + ((BACTERIA_HEIGHT - ENERGY_BAR_HEIGHT) / 2));
-	} else {
 #ifndef DISABLE_SDLTTF
-		char * text = new char[COORDS_MAXLEN + 1];
+	else {
 		SDL_Surface * temp = 0;
 		SDL_Rect destination;
+		stringstream text;
 
-		snprintf(text, COORDS_MAXLEN, "%d", energy);
-		temp = TTF_RenderText_Solid(font, text, STATUS_TEXT_COLOR);
+		text << energy;
+		temp = TTF_RenderText_Solid(font, text.str().c_str(), STATUS_TEXT_COLOR);
 
 		assert(temp != 0);
 
@@ -92,12 +91,9 @@ void bacteria::draw_energy(bool graphically)
 		destination.y = speed.get_y();
 
 		SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
-
-		delete[] text;
-		if(temp != 0)
-			SDL_FreeSurface(temp);
-#endif
+		SDL_FreeSurface(temp);
 	}
+#endif
 }
 
 // Update the bacteria, return false if dead:
