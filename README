@@ -1,17 +1,26 @@
-Bacteria README
-###############
+Bacteria Read-me-not
+####################
 
-Bacteria is a simple bacteria simulator. It was created on a train ride in
-2009, and is meant to be somewhat entertaining to watch; therefore it has
-absolutely nothing to do with science.
+Bacteria is a simple bacteria simulator, where you can watch your little
+bacteria friends eat, multiply and die. The simulation ends when all your
+bacteria has died.
 
-You can, however, graph the bacteria and food populations, using the
-plot_data.p GnuPlot script.
+There are a few commands you can give the simulator when it's running, see the
+file docs/controls.txt
 
-Bacteria started out as a quick hack, and it is pretty obvious looking at the
-code that it is still a wonder that it works as well as it does. However, it is
-undergoing constant maintenance to bring it up to date and make it more C++-
-like. Look out for const_casts and other weird stuff; this will be improved!
+To build the simulator, you need to have the following prerequisites installed:
 
-Any bugs you encounter should be reported on http://github.com/skordal/bacteria.
+CMake   - the build system utilized.
+SDL     - for graphics.
+SDL_ttf - for text.
+
+To build on a Unixy system, use the following commands:
+cmake .
+make
+
+To build on other platforms, you will have to find your own way. CMake is
+multi-platform, as is SDL, so it is possible, but Bacteria has not been tested
+on anything other than Linux.
+
+Please report any issues on <http://github.com/skordal/bacteria/issues>.
 
