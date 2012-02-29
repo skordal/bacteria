@@ -314,11 +314,9 @@ int application::run()
 // Find a file in the application's data directory:
 const char * application::find_file(const char * filename)
 {
-	const char * current_search_path;
 	for(int c = 0; image_search_path[c] != 0; c++)
 	{
 		string temp = image_search_path[c];
-		current_search_path = image_search_path[c];
 		temp += filename;
 
 		if(access(temp.c_str(), F_OK) == 0)
