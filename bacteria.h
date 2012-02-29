@@ -6,9 +6,10 @@
 #ifndef BACTERIA_H
 #define BACTERIA_H
 
-#include <assert.h>
-#include <cmath>
+#include <iomanip>
+#include <sstream>
 
+#include <assert.h>
 #include <SDL.h>
 
 #include "vector.h"

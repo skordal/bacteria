@@ -6,6 +6,8 @@
 #include "application.h"
 #include "bacteria.h"
 
+using namespace std;
+
 extern image * bacteria_image;
 
 #ifndef DISABLE_SDLTTF
@@ -51,12 +53,12 @@ void bacteria::draw()
 void bacteria::draw_coords()
 {
 #ifndef DISABLE_SDLTTF
-	char * text = new char[COORDS_MAXLEN + 1];
 	SDL_Surface * temp = 0;
 	SDL_Rect destination;
+	stringstream text;
 
-	snprintf(text, COORDS_MAXLEN, "(%.2f, %.2f)", speed.get_x(), speed.get_y());
-	temp = TTF_RenderText_Solid(font, text, STATUS_TEXT_COLOR);
+	text << '(' << (int) speed.get_x() << ',' << (int) speed.get_y() << ')';
+	temp = TTF_RenderText_Solid(font, text.str().c_str(), STATUS_TEXT_COLOR);
 
 	assert(temp != 0);
 
@@ -64,10 +66,7 @@ void bacteria::draw_coords()
 	destination.y = speed.get_y();
 
 	SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
-
-	delete[] text;
-	if(temp != 0)
-		SDL_FreeSurface(temp);
+	SDL_FreeSurface(temp);
 #endif
 }
 
