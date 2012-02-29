@@ -170,7 +170,9 @@ void bacteria::set_destination(coordinate_pair_t destination)
 {
 	double new_angle;
 	float delta_x, delta_y;
-	coordinate_pair_t bacteria_center = {speed.get_x() + bacteria_image->get_width() / 2,
+	coordinate_pair_t bacteria_center;
+	
+	bacteria_center = {speed.get_x() + bacteria_image->get_width() / 2,
 		speed.get_y() + bacteria_image->get_height() / 2};
 
 	food_loc = destination;
