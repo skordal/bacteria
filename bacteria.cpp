@@ -19,9 +19,7 @@ bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_ener
 {
 	if(init_energy == bacteria::default_starting_energy)
 	{
-		energy = config->get_int_value("BacteriaStartingEnergy");
-		if(energy == 0)
-			energy = STARTING_ENERGY;
+		energy = STARTING_ENERGY;
 	} else
 		energy = init_energy;
 

@@ -26,7 +26,6 @@ static default_config_value_t default_config[] =  {
 	CFG_INT("StartingFood", STARTING_FOOD),
 	CFG_INT("FramesPerSecond", DEFAULT_FPS),
 	CFG_INT("GrowthRateSamplingInterval", AVG_GROWTH_RATE_INT),
-	CFG_INT("BacteriaStartingEnergy", 0),
 	CFG_FLOAT("FoodSmellingDistance", FOOD_SMELLING_DISTANCE),
 	CFG_INT("FoodEnergy", FOOD_ENERGY),
 	CFG_INT("ReproductionEnergy", REPRODUCTION_ENERGY),
