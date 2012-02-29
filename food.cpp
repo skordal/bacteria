@@ -3,9 +3,9 @@
 /*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
+#include "application.h"
 #include "food.h"
 
-extern SDL_Surface * screen;
 extern image * food_image;
 extern config_db * config;
 
@@ -30,7 +30,8 @@ void food::draw()
 	position.x = x;
 	position.y = y;
 
-	SDL_BlitSurface(food_image->get_image(), 0, screen, &position);
+	SDL_BlitSurface(food_image->get_image(), 0,
+		application::get()->get_screen(), &position);
 }
 
 // This function returns the "anchor point" closes to the specified bacteria.

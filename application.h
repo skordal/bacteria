@@ -33,14 +33,19 @@
 class application
 {
 	public:
+		static application * init(int argc, char * argv[]);
+		static application * get() { return global_app; }
+		int run();
+
+		// Finds a file in the application search path:
+		static const char * find_file(const char * filename);
+
+		SDL_Surface * get_screen() const { return screen; }
+	private:
 		application();
 		~application();
 
-		static application * init(int argc, char * argv[]);
-		int run();
-
-		static const char * find_file(const char * filename);
-	private:
+		// Clean up function, called by atexit:
 		static void cleanup();
 
 		// Initialization functions:
@@ -71,7 +76,7 @@ class application
 		logger * data_logger;
 		statistics * stats;
 
-		SDL_Surface * window_icon;
+		SDL_Surface * window_icon, * screen;
 		SDL_TimerID refresh_timer, logger_timer;
 
 		std::list<bacteria> spawn_list;

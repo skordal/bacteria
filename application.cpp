@@ -7,9 +7,6 @@
 
 using namespace std;
 
-// Global screen:
-SDL_Surface * screen;
-
 #ifndef DISABLE_SDLTTF
 // Global font:
 TTF_Font * font;

@@ -3,9 +3,9 @@
 /*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
+#include "application.h"
 #include "bacteria.h"
 
-extern SDL_Surface * screen;
 extern image * bacteria_image;
 
 #ifndef DISABLE_SDLTTF
@@ -44,7 +44,8 @@ void bacteria::draw()
 	position.x = floorf(speed.get_x());
 	position.y = floorf(speed.get_y());
 
-	SDL_BlitSurface(bacteria_image->get_image(), 0, screen, &position);
+	SDL_BlitSurface(bacteria_image->get_image(), 0, 
+		application::get()->get_screen(), &position);
 }
 
 void bacteria::draw_coords()
@@ -62,7 +63,7 @@ void bacteria::draw_coords()
 	destination.x = speed.get_x() + BACTERIA_WIDTH;
 	destination.y = speed.get_y();
 
-	SDL_BlitSurface(temp, 0, screen, &destination);
+	SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
 
 	delete[] text;
 	if(temp != 0)
@@ -75,7 +76,8 @@ void bacteria::draw_energy(bool graphically)
 {
 	if(graphically)
 	{
-		e_bar.draw(speed.get_x() + BACTERIA_WIDTH, speed.get_y() + ((BACTERIA_HEIGHT - ENERGY_BAR_HEIGHT) / 2));
+		e_bar.draw(speed.get_x() + BACTERIA_WIDTH,
+			speed.get_y() + ((BACTERIA_HEIGHT - ENERGY_BAR_HEIGHT) / 2));
 	} else {
 #ifndef DISABLE_SDLTTF
 		char * text = new char[COORDS_MAXLEN + 1];
@@ -90,7 +92,7 @@ void bacteria::draw_energy(bool graphically)
 		destination.x = speed.get_x() + BACTERIA_WIDTH;
 		destination.y = speed.get_y();
 
-		SDL_BlitSurface(temp, 0, screen, &destination);
+		SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
 
 		delete[] text;
 		if(temp != 0)
