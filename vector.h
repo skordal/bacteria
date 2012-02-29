@@ -11,13 +11,6 @@
 #include "config.h"
 #include "macros.h"
 
-#define ACCEPTABLE ACCEPTABLE_TOLERANCE
-
-typedef struct {
-	class vector * a;
-	class vector * b;
-} col_vector_t;
-
 typedef struct {
 	float x, y;
 } coordinate_pair_t;

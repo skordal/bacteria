@@ -179,7 +179,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 				|| CMP_PAIR(bacteria_dest, ANCHOR_3)
 				|| CMP_PAIR(bacteria_dest, ANCHOR_4))
 			{
-				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_1, ACCEPTABLE))
+				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_1))
 				{
 					if(anchor_1 != 0 && anchor_1 != &temp)
 						temp.release();
@@ -188,7 +188,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 						anchor_1->stop();
 					}
 				}
-				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_2, ACCEPTABLE))
+				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_2))
 				{
 					if(anchor_2 != 0 && anchor_2 != &temp)
 						temp.release();
@@ -197,7 +197,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 						anchor_2->stop();
 					}
 				}
-				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_3, ACCEPTABLE))
+				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_3))
 				{
 					if(anchor_3 != 0 && anchor_3 != &temp)
 						temp.release();
@@ -206,7 +206,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 						anchor_3->stop();
 					}
 				}
-				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_4, ACCEPTABLE))
+				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_4))
 				{
 					if(anchor_4 != 0 && anchor_4 != &temp)
 						temp.release();

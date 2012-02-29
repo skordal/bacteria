@@ -11,12 +11,12 @@
 // Plus-minus function:
 #define PM(x) ((random() % x) * (random() % 2 ? 1 : -1))
 
-// Check if an object has reached its destination:
-#define AT_DESTINATION(cur_pos, dest_pos, tolerance) \
-	((cur_pos.x >= (dest_pos.x - tolerance)) && \
-		(cur_pos.x <= (dest_pos.x + tolerance)) && \
-		(cur_pos.y >= (dest_pos.y - tolerance)) && \
-		(cur_pos.y <= (dest_pos.y + tolerance)))
+// Check if an object has reached its destination, ± 2 pixels:
+#define AT_DESTINATION(cur_pos, dest_pos) \
+	((cur_pos.x >= (dest_pos.x - 2)) && \
+		(cur_pos.x <= (dest_pos.x + 2)) && \
+		(cur_pos.y >= (dest_pos.y - 2)) && \
+		(cur_pos.y <= (dest_pos.y + 2)))
 
 // Comparison of coordinate pairs:
 #define CMP_PAIR(pair_a, pair_b) \

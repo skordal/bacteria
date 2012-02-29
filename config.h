@@ -70,9 +70,6 @@
 // Starting amount of food nuggets:
 #define STARTING_FOOD	10
 
-// Acceptable error tolerance for collision detection:
-#define ACCEPTABLE_TOLERANCE	2
-
 // Distance that bacteria can smell food:
 #define FOOD_SMELLING_DISTANCE	50.0f
 
