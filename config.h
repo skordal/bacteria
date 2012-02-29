@@ -59,10 +59,6 @@
 
 // Filename and measurements of bacteria:
 #define BACTERIA_FILENAME	application::find_file("graphics/bacteria.bmp")
-#define BACTERIA_WIDTH		20
-#define BACTERIA_HEIGHT		20
-#define BACTERIA_CENTER_X	(BACTERIA_WIDTH / 2)
-#define BACTERIA_CENTER_Y	(BACTERIA_HEIGHT / 2)
 #define BACTERIA_ALPHA		(SDL_ALPHA_OPAQUE - 60)
 
 // Starting population of bacteria:
@@ -75,11 +71,7 @@
 
 // Food filename and measurements:
 #define FOOD_FILENAME	application::find_file("graphics/food.bmp")
-#define FOOD_WIDTH	20
-#define FOOD_HEIGHT	20
 #define FOOD_ALPHA	128
-#define FOOD_CENTER_X	FOOD_WIDTH / 2
-#define FOOD_CENTER_Y	FOOD_HEIGHT / 2
 
 // Energy contained in each food nugget:
 #define FOOD_ENERGY	800

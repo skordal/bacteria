@@ -267,8 +267,8 @@ bool application::init_populations()
 	// Create food:
 	clog << "Creating initial food nuggets..." << endl;
 	for(int c = 0; c < config->get_int_value("StartingFood"); c++)
-		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
-			random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
+			random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
 
 	return true;
 }
@@ -341,8 +341,8 @@ void application::handle_update()
 	if(counter >= config->get_int_value("FoodSpawningRate") && !stats->get_game_over())
 	{
 		counter = 0;
-		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
-			random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
+			random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
 		stats->add_food();
 	}
 
@@ -430,8 +430,8 @@ void application::handle_key(SDLKey key)
 			stats->add_bacteria();
 			break;
 		case SDLK_f: // F - Add food nugget
-			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
-				random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
+				random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
 			stats->add_food();
 			break;
 		case SDLK_e: // E - Toggle energy bar for bacteria

@@ -6,7 +6,7 @@
 #include "application.h"
 #include "food.h"
 
-extern image * food_image;
+extern image * food_image, * bacteria_image;
 extern config_db * config;
 
 // This function initializes the food nugget:
@@ -154,16 +154,20 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 {
 	std::list<bacteria>::iterator bacteria_iterator;
 
-	vector food_location = vector(0, 0, x + FOOD_CENTER_X, y + FOOD_CENTER_Y);
+	vector food_location = vector(0, 0, x + food_image->get_width() / 2,
+		y + food_image->get_height() / 2);
 
 	// Iterate through the bacteria list:
-	for(bacteria_iterator = bacteria_list.begin(); bacteria_iterator != bacteria_list.end(); bacteria_iterator++)
+	for(bacteria_iterator = bacteria_list.begin(); bacteria_iterator != bacteria_list.end();
+		bacteria_iterator++)
 	{
 		bacteria & temp = *bacteria_iterator;
 		vector temp_center = vector(temp.get_vector());
 		coordinate_pair_t bacteria_dest = temp.get_destination();
-		temp_center.set_xy(temp_center.get_x() + BACTERIA_CENTER_X, temp_center.get_y() + BACTERIA_CENTER_Y);
 		float distance = vector::distance_between(temp_center, food_location);
+
+		temp_center.set_xy(temp_center.get_x() + bacteria_image->get_width() / 2,
+			temp_center.get_y() + bacteria_image->get_height() / 2);
 
 		// Check if the bacteria is within "smelling distance" of the food:
 		if(distance <= config->get_float_value("FoodSmellingDistance")
