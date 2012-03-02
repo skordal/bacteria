@@ -60,41 +60,66 @@ application * application::init(int argc, char * argv[])
 	global_app->init_random();
 
 	if(!global_app->init_cmd_args(argc, argv))
+	{
 		retval = false;
+		goto _skip_init;
+	}
 
 	if(!global_app->init_config())
+	{
 		retval = false;
+		goto _skip_init;
+	}
 
 	if(!global_app->init_sdl())
+	{
 		retval = false;
+		goto _skip_init;
+	}
 	
 	if(!global_app->init_graphics())
+	{
 		retval = false;
+		goto _skip_init;
+	}
 	
 	if(!global_app->init_logging())
+	{
 		retval = false;
+		goto _skip_init;
+	}
 
 	if(!global_app->init_populations())
+	{
 		retval = false;
+		goto _skip_init;
+	}
 	
 	if(!global_app->init_timers())
+	{
 		retval = false;
+		goto _skip_init;
+	}
 
 	clog << "Initialization completed." << endl;
 	clog << "*** Now running ***" << endl << endl;
 
+_skip_init:
 	if(retval)
 	{
 		atexit(application::cleanup);
 		return global_app;
 	} else {
 		delete global_app;
+		global_app = 0;
 		return 0;
 	}
 }
 
 void application::cleanup()
 {
+	clog << "Cleaning up..." << endl;
+
 	if(global_app != 0)
 		delete global_app;
 }
@@ -483,8 +508,6 @@ void application::display_version()
 // Clean up memory for the application:
 application::~application()
 {
-	clog << "Cleaning up..." << endl;
-
 	// Remove timers:
 	SDL_RemoveTimer(refresh_timer);
 	SDL_RemoveTimer(logger_timer);
