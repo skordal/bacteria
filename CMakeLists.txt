@@ -15,6 +15,7 @@ set(SOURCE_FILES
 	main.cpp
 	statistics.cpp
 	vector.cpp
+	window.cpp
 )
 
 find_package(SDL REQUIRED)
