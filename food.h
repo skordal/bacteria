@@ -26,7 +26,7 @@ class food
 		~food();
 
 		bool update();
-		void draw();
+		void draw() const;
 
 		void release_bacteria();
 		void check_for_bacteria(std::list<bacteria> & bacteria_list);

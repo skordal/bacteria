@@ -24,14 +24,9 @@ food::food(int x, int y)
 }
 
 // This function draws the food nugget:
-void food::draw()
+void food::draw() const
 {
-	SDL_Rect position;
-	position.x = x;
-	position.y = y;
-
-	SDL_BlitSurface(food_image->get_image(), 0,
-		application::get()->get_screen(), &position);
+	window::get()->draw(*food_image, x, y);
 }
 
 // This function returns the "anchor point" closes to the specified bacteria.
