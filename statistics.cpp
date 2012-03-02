@@ -10,10 +10,6 @@ using namespace std;
 
 extern config_db * config;
 
-#ifndef DISABLE_SDLTTF
-extern TTF_Font * font;
-#endif
-
 statistics::statistics(int bacteria, int food)
 	: bacteria(bacteria), food(food), game_over(false), paused(false),
 	peak_pop(bacteria), peak_food(food), total_spawn(bacteria),

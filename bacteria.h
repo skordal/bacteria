@@ -54,9 +54,6 @@ class bacteria
 
 		bool is_heading_for_food() const { return heading_for_food; }
 		static bool does_collide(bacteria * a, bacteria * b);
-
-		// Use the default starting energy:
-		static const int default_starting_energy = 0;
 	private:
 		int energy;
 		int generation;

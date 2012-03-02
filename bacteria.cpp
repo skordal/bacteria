@@ -13,7 +13,7 @@ extern image * bacteria_image;
 bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_energy, int gen)
 	: alive(true), generation(gen), heading_for_food(false), at_food(false)
 {
-	if(init_energy == bacteria::default_starting_energy)
+	if(init_energy == 0)
 		energy = STARTING_ENERGY;
 	else
 		energy = init_energy;
