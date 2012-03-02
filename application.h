@@ -9,6 +9,7 @@
 #include <ctime>
 #include <list>
 #include <iostream>
+#include <stdexcept>
 
 #include <getopt.h>
 

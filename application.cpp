@@ -111,7 +111,6 @@ _skip_init:
 		return global_app;
 	} else {
 		delete global_app;
-		global_app = 0;
 		return 0;
 	}
 }
@@ -266,8 +265,9 @@ bool application::init_graphics()
 		red_bar_segment = new image(RED_BAR_SEGMENT);
 		yellow_bar_segment = new image(YELLOW_BAR_SEGMENT);
 		green_bar_segment = new image(GREEN_BAR_SEGMENT);
-	} catch(...)
+	} catch(exception & error)
 	{
+		cerr << "Error: " << error.what() << endl;
 		return false;
 	}
 

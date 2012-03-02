@@ -7,13 +7,12 @@
 #define IMAGE_H
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 #include <SDL.h>
 
 #include "config.h"
-
-#define IMAGE_ERROR_NOT_FOUND -1
 
 class image
 {

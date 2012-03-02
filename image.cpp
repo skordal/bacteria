@@ -13,10 +13,7 @@ image::image(const string & filename, int alpha)
 
 	img = SDL_LoadBMP(filename.c_str());
 	if(img == NULL)
-	{
-		cerr << "ERROR: Could not load file " << filename << "!" << endl;
-		throw IMAGE_ERROR_NOT_FOUND;
-	}
+		throw runtime_error(string("Could not load file ").append(filename));
 
 	SDL_SetColorKey(img, SDL_SRCCOLORKEY, DEFAULT_COLOR_KEY(img));
 	SDL_SetAlpha(img, SDL_SRCALPHA, alpha);
