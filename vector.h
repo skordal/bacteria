@@ -38,8 +38,8 @@ class vector
 		coordinate_pair_t get_position() const;
 
 		static float distance_between(const vector & a, const vector & b);
-		static float distance_between(const coordinate_pair_t & a,
-			const coordinate_pair_t & b);
+		static float distance_between(coordinate_pair_t a,
+			coordinate_pair_t b);
 		static double angle_between(coordinate_pair_t a, coordinate_pair_t b);
 	private:
 		double angle, magnitude;

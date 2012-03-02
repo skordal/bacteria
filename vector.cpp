@@ -13,8 +13,8 @@ vector::vector()
 
 // Copy constructor:
 vector::vector(const vector & copyme)
+	: angle(copyme.angle), magnitude(copyme.magnitude), x(copyme.x), y(copyme.y)
 {
-	vector(copyme.angle, copyme.magnitude, copyme.x, copyme.y);
 }
 
 vector::vector(double angle, double magnitude, float x, float y)
@@ -41,7 +41,7 @@ float vector::distance_between(const vector & a, const vector & b)
 }
 
 // Returns the distance between the two coordinate pairs:
-float vector::distance_between(const coordinate_pair_t & a, const coordinate_pair_t & b)
+float vector::distance_between(coordinate_pair_t a, coordinate_pair_t b)
 {
 	float delta_x, delta_y;
 
