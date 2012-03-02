@@ -86,9 +86,7 @@ bool config_parser::parse()
 			return false;
 		}
 
-		clog << attribute_name << " = " << attribute_value << endl;
 		istringstream value_extractor(attribute_value);
-
 		switch(type)
 		{
 			case TYPE_INTEGER:
