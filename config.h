@@ -8,9 +8,6 @@
 
 #include "macros.h"
 
-// Completely disable SDL_ttf (causes no statistics to be drawn):
-// #define DISABLE_SDLTTF 1
-
 // Config file to read by default (NULL = no file):
 #define DEFAULT_CONFIG_FILE "default_config.cfg"
 

@@ -178,7 +178,6 @@ bool application::init_sdl()
 	if(SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO) == -1)
 		return false;
 
-#ifndef DISABLE_SDLTTF
 	clog << "Initializing SDL_ttf..." << endl;
 	if(TTF_Init() == -1)
 		return false;
@@ -189,7 +188,6 @@ bool application::init_sdl()
 		cerr << "ERROR: Could not load font " << STATUS_FONT << endl;
 		return false;
 	}
-#endif
 
 	clog << "Creating main window (" << config->get_int_value("ScreenWidth")
 		<< " x " << config->get_int_value("ScreenHeight") << ")..." << endl;
@@ -509,10 +507,8 @@ application::~application()
 	delete data_logger;
 	delete stats;
 
-#ifndef DISABLE_SDLTTF
 	TTF_CloseFont(font);
 	TTF_Quit();
-#endif
 
 	SDL_Quit();
 }

@@ -6,21 +6,18 @@
 #ifndef BACTERIA_H
 #define BACTERIA_H
 
+#include <cassert>
 #include <iomanip>
 #include <sstream>
 
-#include <assert.h>
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #include "vector.h"
 #include "image.h"
 #include "energy_bar.h"
 #include "config_db.h"
 #include "config.h"
-
-#ifndef DISABLE_SDLTTF
-#include <SDL_ttf.h>
-#endif
 
 class bacteria
 {

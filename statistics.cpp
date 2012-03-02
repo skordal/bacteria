@@ -39,8 +39,6 @@ void statistics::draw()
 {
 	SDL_Surface * temp;
 	SDL_Rect destination;
-
-#ifndef DISABLE_SDLTTF
 	stringstream message_buffer;
 
 	// Upper statistics display:
@@ -88,7 +86,6 @@ void statistics::draw()
 
 	if(temp != 0)
 		SDL_FreeSurface(temp);
-#endif
 }
 
 // Simply calculated from the current number of bacteria.

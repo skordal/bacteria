@@ -45,8 +45,7 @@ void bacteria::draw()
 
 void bacteria::draw_coords()
 {
-#ifndef DISABLE_SDLTTF
-	SDL_Surface * temp = 0;
+	SDL_Surface * temp;
 	SDL_Rect destination;
 	stringstream text;
 
@@ -61,7 +60,6 @@ void bacteria::draw_coords()
 
 	SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
 	SDL_FreeSurface(temp);
-#endif
 }
 
 // Draw the energy bar or energy display:
@@ -70,7 +68,6 @@ void bacteria::draw_energy(bool graphically)
 	if(graphically)
 		e_bar.draw(speed.get_x() + bacteria_image->get_width(),
 			speed.get_y() + ((bacteria_image->get_height() - ENERGY_BAR_HEIGHT) / 2));
-#ifndef DISABLE_SDLTTF
 	else {
 		SDL_Surface * temp = 0;
 		SDL_Rect destination;
@@ -88,7 +85,6 @@ void bacteria::draw_energy(bool graphically)
 		SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
 		SDL_FreeSurface(temp);
 	}
-#endif
 }
 
 // Update the bacteria, return false if dead:

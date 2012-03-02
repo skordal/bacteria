@@ -1,7 +1,6 @@
 # CMakeLists.txt file for Bakteria - the interesting game of bacteria
 # (c) Kristian K. Skordal 2009 - 2012
 cmake_minimum_required(VERSION 2.6)
-
 project(bacteria)
 
 set(SOURCE_FILES
@@ -23,28 +22,15 @@ if(NOT SDL_FOUND)
 	message(FATAL_ERROR "Could not find SDL!")
 endif(NOT SDL_FOUND)
 
-if(NOT DISABLE_SDLTTF)
-	find_package(SDL_ttf)
-	if(NOT SDLTTF_FOUND)
-		message("Could not find SDL_ttf!")
-		message("Disabling SDL_ttf")
-		set(CMAKE_CXX_FLAGS "-DDISABLE_SDLTTF")
-		set(DISABLE_SDLTTF TRUE)
-	endif(NOT SDLTTF_FOUND)
-endif(NOT DISABLE_SDLTTF)
+find_package(SDL_ttf REQUIRED)
+if(NOT SDLTTF_FOUND)
+	message(FATAL_ERROR "Could not find SDL_ttf!")
+endif(NOT SDLTTF_FOUND)
 
-if(NOT DISABLE_SDLTTF)
-	include_directories(${SDL_INCLUDE_DIR} ${SDLTTF_INCLUDE_DIR})
-else(NOT DISABLE_SDLTTF)
-	include_directories(${SDL_INCLUDE_DIR})
-endif(NOT DISABLE_SDLTTF)
+include_directories(${SDL_INCLUDE_DIR} ${SDLTTF_INCLUDE_DIR})
 
 add_executable(bacteria ${SOURCE_FILES})
-if(NOT DISABLE_SDLTTF)
-	target_link_libraries(bacteria ${SDL_LIBRARY} ${SDLTTF_LIBRARY} rt)
-else(NOT DISABLE_SDLTTF)
-	target_link_libraries(bacteria ${SDL_LIBRARY} rt)
-endif(NOT DISABLE_SDLTTF)
+target_link_libraries(bacteria ${SDL_LIBRARY} ${SDLTTF_LIBRARY})
 
 # Install image files:
 install(FILES

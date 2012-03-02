@@ -10,8 +10,10 @@
 #include <list>
 #include <iostream>
 
-#include <SDL.h>
 #include <getopt.h>
+
+#include <SDL.h>
+#include <SDL_ttf.h>
 
 #include "image.h"
 #include "statistics.h"
@@ -21,10 +23,6 @@
 #include "config_db.h"
 #include "config_parser.h"
 #include "config.h"
-
-#ifndef DISABLE_SDLTTF
-#include <SDL_ttf.h>
-#endif
 
 #define UPDATE_EVENT {SDL_USEREVENT, 0, NULL, NULL}
 #define LOGGER_EVENT {SDL_USEREVENT, 1, NULL, NULL}
@@ -40,9 +38,7 @@ class application
 		static const char * find_file(const char * filename);
 
 		SDL_Surface * get_screen() const { return screen; }
-#ifndef DISABLE_SDLTTF
 		TTF_Font * get_font() const { return font; }
-#endif
 	private:
 		application();
 		~application();
@@ -80,9 +76,7 @@ class application
 
 		SDL_Surface * window_icon, * screen;
 		SDL_TimerID refresh_timer, logger_timer;
-#ifndef DISABLE_SDLTTF
 		TTF_Font * font;
-#endif
 
 		std::list<bacteria>::iterator bacteria_iterator;
 		std::list<food>::iterator food_iterator;

@@ -6,19 +6,16 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
 
+#include <ctime>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 
-#include <ctime>
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #include "config_db.h"
 #include "config.h"
-
-#ifndef DISABLE_SDLTTF
-#include <SDL_ttf.h>
-#endif
 
 class statistics
 {
