@@ -3,10 +3,10 @@
 /*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
+#include "application.h"
 #include "food.h"
 
-extern SDL_Surface * screen;
-extern image * food_image;
+extern image * food_image, * bacteria_image;
 extern config_db * config;
 
 // This function initializes the food nugget:
@@ -30,7 +30,8 @@ void food::draw()
 	position.x = x;
 	position.y = y;
 
-	SDL_BlitSurface(food_image->get_image(), 0, screen, &position);
+	SDL_BlitSurface(food_image->get_image(), 0,
+		application::get()->get_screen(), &position);
 }
 
 // This function returns the "anchor point" closes to the specified bacteria.
@@ -153,16 +154,20 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 {
 	std::list<bacteria>::iterator bacteria_iterator;
 
-	vector food_location = vector(0, 0, x + FOOD_CENTER_X, y + FOOD_CENTER_Y);
+	vector food_location = vector(0, 0, x + food_image->get_width() / 2,
+		y + food_image->get_height() / 2);
 
 	// Iterate through the bacteria list:
-	for(bacteria_iterator = bacteria_list.begin(); bacteria_iterator != bacteria_list.end(); bacteria_iterator++)
+	for(bacteria_iterator = bacteria_list.begin(); bacteria_iterator != bacteria_list.end();
+		bacteria_iterator++)
 	{
 		bacteria & temp = *bacteria_iterator;
 		vector temp_center = vector(temp.get_vector());
 		coordinate_pair_t bacteria_dest = temp.get_destination();
-		temp_center.set_xy(temp_center.get_x() + BACTERIA_CENTER_X, temp_center.get_y() + BACTERIA_CENTER_Y);
 		float distance = vector::distance_between(temp_center, food_location);
+
+		temp_center.set_xy(temp_center.get_x() + bacteria_image->get_width() / 2,
+			temp_center.get_y() + bacteria_image->get_height() / 2);
 
 		// Check if the bacteria is within "smelling distance" of the food:
 		if(distance <= config->get_float_value("FoodSmellingDistance")
@@ -178,7 +183,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 				|| CMP_PAIR(bacteria_dest, ANCHOR_3)
 				|| CMP_PAIR(bacteria_dest, ANCHOR_4))
 			{
-				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_1, ACCEPTABLE))
+				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_1))
 				{
 					if(anchor_1 != 0 && anchor_1 != &temp)
 						temp.release();
@@ -187,7 +192,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 						anchor_1->stop();
 					}
 				}
-				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_2, ACCEPTABLE))
+				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_2))
 				{
 					if(anchor_2 != 0 && anchor_2 != &temp)
 						temp.release();
@@ -196,7 +201,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 						anchor_2->stop();
 					}
 				}
-				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_3, ACCEPTABLE))
+				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_3))
 				{
 					if(anchor_3 != 0 && anchor_3 != &temp)
 						temp.release();
@@ -205,7 +210,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 						anchor_3->stop();
 					}
 				}
-				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_4, ACCEPTABLE))
+				if(AT_DESTINATION(temp_center.get_position(), ANCHOR_4))
 				{
 					if(anchor_4 != 0 && anchor_4 != &temp)
 						temp.release();

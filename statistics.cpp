@@ -3,16 +3,12 @@
 /*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
+#include "application.h"
 #include "statistics.h"
 
 using namespace std;
 
-extern SDL_Surface * screen;
 extern config_db * config;
-
-#ifndef DISABLE_SDLTTF
-extern TTF_Font * font;
-#endif
 
 statistics::statistics(int bacteria, int food)
 	: bacteria(bacteria), food(food), game_over(false), paused(false),
@@ -58,17 +54,18 @@ void statistics::draw()
 			<< setw(2) << running_minutes << " m, "
 			<< setw(2) << running_seconds << " s";
 
-	temp = TTF_RenderText_Solid(font, message_buffer.str().c_str(), STATUS_TEXT_COLOR);
+	temp = TTF_RenderText_Solid(application::get()->get_font(),
+		message_buffer.str().c_str(), STATUS_TEXT_COLOR);
 	if(temp == 0)
 		cerr << "WARNING: Could not render top text!" << endl;
 	else
-		SDL_BlitSurface(temp, 0, screen, 0);
+		SDL_BlitSurface(temp, 0, application::get()->get_screen(), 0);
 	
 	if(temp != 0)
 		SDL_FreeSurface(temp);
 
 	// Lower statistics display:
-	message_buffer.str("Empty");
+	message_buffer.str("");
 
 	// Latest generation:
 	message_buffer << "Latest generation: " << setw(4) << max_gen
@@ -76,16 +73,17 @@ void statistics::draw()
 		<< " | Food nuggets eaten: " << setw(7) << food_eaten
 		<< " | dP/dt: " << setprecision(3) << avg_growth;
 
-//	if(game_over)
-//		message_buffer << " | SIMULATION ENDED.";
+	if(game_over)
+		message_buffer << " | SIMULATION ENDED.";
 
-	temp = TTF_RenderText_Solid(font, message_buffer.str().c_str(), STATUS_TEXT_COLOR);
+	temp = TTF_RenderText_Solid(application::get()->get_font(),
+		message_buffer.str().c_str(), STATUS_TEXT_COLOR);
 	if(temp == 0)
 		cerr << "WARNING: Could not render buttom text!" << endl;
 	else {
 		destination.x = 0;
 		destination.y = config->get_int_value("ScreenHeight") - temp->h;
-		SDL_BlitSurface(temp, 0, screen, &destination);
+		SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
 	}
 
 	if(temp != 0)

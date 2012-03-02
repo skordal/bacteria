@@ -11,13 +11,6 @@
 #include "config.h"
 #include "macros.h"
 
-#define ACCEPTABLE ACCEPTABLE_TOLERANCE
-
-typedef struct {
-	class vector * a;
-	class vector * b;
-} col_vector_t;
-
 typedef struct {
 	float x, y;
 } coordinate_pair_t;
@@ -27,7 +20,7 @@ class vector
 	public:
 		vector();
 		vector(const vector & copy);
-		vector(double ang, double magn, float px = 0.0f, float py = 0.0f);
+		vector(double ang, double magn, float x = 0.0f, float y = 0.0f);
 
 		float get_x() const { return x; }
 		float get_y() const { return y; }
@@ -42,15 +35,12 @@ class vector
 		void set_angle(double new_angle) { angle = new_angle; }
 		void set_magnitude(double new_magnitude) { magnitude = new_magnitude; }
 
-		coordinate_pair_t decompose();
-		coordinate_pair_t get_position();
+		coordinate_pair_t get_position() const;
 
-		static float distance_between(vector * a, vector * b);
 		static float distance_between(const vector & a, const vector & b);
-		static float distance_between(coordinate_pair_t a, coordinate_pair_t b);
+		static float distance_between(coordinate_pair_t a,
+			coordinate_pair_t b);
 		static double angle_between(coordinate_pair_t a, coordinate_pair_t b);
-	protected:
-		bool moving_sideways();
 	private:
 		double angle, magnitude;
 		float x, y;

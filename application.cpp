@@ -7,14 +7,6 @@
 
 using namespace std;
 
-// Global screen:
-SDL_Surface * screen;
-
-#ifndef DISABLE_SDLTTF
-// Global font:
-TTF_Font * font;
-#endif
-
 // Global image variables:
 image * bacteria_image, * food_image;
 image * red_bar_segment, * yellow_bar_segment, * green_bar_segment;
@@ -23,6 +15,9 @@ config_db * config;
 // Lists of organisms:
 list<bacteria> bacteria_list;
 list<food> food_list;
+
+// Global application object:
+application * application::global_app = 0;
 
 // Timer callback functions:
 Uint32 timer_callback(Uint32 interval, void * unused);
@@ -49,7 +44,7 @@ static struct option cmd_options[] = {
 };
 
 application::application()
-	: config_filename(0), window_icon(0), display_coords(false), display_energy(false),
+	: config_filename(""), window_icon(0), display_coords(false), display_energy(false),
 	  display_stats(true), graphical_energy_bar(true), running(true),
 	  starting_pop(STARTING_POP), starting_food(STARTING_FOOD),
 	  logging_interval(LOGGER_UPDATE_INTERVAL)
@@ -58,43 +53,57 @@ application::application()
 
 // This function initializes the application by running
 // all the other initialization functions:
-bool application::init(int argc, char * argv[])
+application * application::init(int argc, char * argv[])
 {
-	config_parser * config_file = 0;
+	bool retval = true;
+	global_app = new application();
+	global_app->init_random();
 
-	if(!init_cmd_args(argc, argv))
-		return false;
+	if(!global_app->init_cmd_args(argc, argv))
+		retval = false;
 
-	if(!init_config())
-		return false;
+	if(!global_app->init_config())
+		retval = false;
 
-	if(!init_random())
-		return false;
-
-	if(!init_sdl())
-		return false;
+	if(!global_app->init_sdl())
+		retval = false;
 	
-	if(!init_graphics())
-		return false;
+	if(!global_app->init_graphics())
+		retval = false;
 	
-	if(!init_logging())
-		return false;
+	if(!global_app->init_logging())
+		retval = false;
 
-	if(!init_populations())
-		return false;
+	if(!global_app->init_populations())
+		retval = false;
 	
-	if(!init_timers())
-		return false;
+	if(!global_app->init_timers())
+		retval = false;
 
 	clog << "Initialization completed." << endl;
 	clog << "*** Now running ***" << endl << endl;
 
-	return true;
+	if(retval)
+	{
+		atexit(application::cleanup);
+		return global_app;
+	} else {
+		delete global_app;
+		return 0;
+	}
+}
+
+void application::cleanup()
+{
+	if(global_app != 0)
+		delete global_app;
 }
 
 // This function parses the command line arguments:
 bool application::init_cmd_args(int argc, char * argv[])
 {
+	int option;
+
 	while((option = getopt_long(argc, argv, opt_string, cmd_options, 0)) != -1)
 	{
 		switch(option)
@@ -103,8 +112,7 @@ bool application::init_cmd_args(int argc, char * argv[])
 				starting_pop = atoi(optarg);
 				break;
 			case 'c':
-				config_filename = new char[strlen(optarg) + 1];
-				strcpy(config_filename, optarg);
+				config_filename = string(optarg);
 				break;
 			case 'f':
 				starting_food = atoi(optarg);
@@ -142,16 +150,12 @@ bool application::init_config()
 	if(logging_interval != config->get_int_value("LoggerUpdateInterval"))
 		config->set_value("LoggerUpdateInterval", logging_interval);
 
-	if(config_filename != 0)
+	if(!config_filename.empty())
 	{
 		clog << "Using configuration file " << config_filename << "..." << endl;
 		config_file = new config_parser(config, config_filename);
 		if(!config_file->parse())
-		{	
-			delete[] config_filename;
 			return false;
-		}
-		delete[] config_filename;
 	}
 
 	if(config_file != 0)
@@ -161,11 +165,10 @@ bool application::init_config()
 }
 
 // This function initializes the random number generator:
-bool application::init_random()
+void application::init_random()
 {
 	clog << "Initializing random number generator..." << endl;
 	srandom(time(0));
-	return true;
 }
 
 // This function initializes SDL:
@@ -259,8 +262,8 @@ bool application::init_populations()
 	// Create food:
 	clog << "Creating initial food nuggets..." << endl;
 	for(int c = 0; c < config->get_int_value("StartingFood"); c++)
-		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
-			random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
+			random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
 
 	return true;
 }
@@ -299,34 +302,31 @@ int application::run()
 		}
 	}
 
-	return EXIT_SUCCESS;
+	return 0;
 }
 
 // Find a file in the application's data directory:
-char * application::find_file(const char * filename)
+const char * application::find_file(const char * filename)
 {
-	const char * current_search_path;
 	for(int c = 0; image_search_path[c] != 0; c++)
 	{
-		char * temp = new char[MAX_PATHLEN];
-		current_search_path = image_search_path[c];
-		strncpy(temp, image_search_path[c], MAX_PATHLEN);
-		strncat(temp, filename, MAX_PATHLEN - (strlen(temp) + 1));
+		string temp = image_search_path[c];
+		temp += filename;
 
-		if(access(temp, F_OK) == 0)
-		{
-			return temp;
-		} else
-			delete[] temp;
+		if(access(temp.c_str(), F_OK) == 0)
+			return temp.c_str();
 	}
 
-	printf("File not found: %s\n", filename);
+	cerr << "ERROR: File not found: " << filename << endl;
 	return 0;
 }
 
 // Handles an update event:
 void application::handle_update()
 {
+	static int counter = 0;
+	std::list<bacteria> spawn_list;
+	
 	counter++;
 
 	// Clear the screen:
@@ -336,8 +336,8 @@ void application::handle_update()
 	if(counter >= config->get_int_value("FoodSpawningRate") && !stats->get_game_over())
 	{
 		counter = 0;
-		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
-			random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
+			random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
 		stats->add_food();
 	}
 
@@ -425,8 +425,8 @@ void application::handle_key(SDLKey key)
 			stats->add_bacteria();
 			break;
 		case SDLK_f: // F - Add food nugget
-			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - FOOD_WIDTH),
-				random() % (config->get_int_value("ScreenHeight") - FOOD_HEIGHT)));
+			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
+				random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
 			stats->add_food();
 			break;
 		case SDLK_e: // E - Toggle energy bar for bacteria

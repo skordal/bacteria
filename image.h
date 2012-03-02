@@ -22,6 +22,9 @@ class image
 		~image();
 	
 		SDL_Surface * get_image() const { return img; }
+
+		int get_width() const { return img->w; }
+		int get_height() const { return img->h; }
 	private:
 		SDL_Surface * img;
 };

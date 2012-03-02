@@ -121,3 +121,4 @@ bool config_parser::parse()
 	config_file.close();
 	return true;
 }
+

@@ -7,7 +7,6 @@
 #define ENERGY_BAR_H
 
 #include <cmath>
-
 #include <SDL.h>
 
 #include "image.h"

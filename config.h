@@ -11,20 +11,8 @@
 // Completely disable SDL_ttf (causes no statistics to be drawn):
 // #define DISABLE_SDLTTF 1
 
-// Enable many debugging statements from the config system:
-// #define CONFIG_DEBUGGING 1
-
 // Config file to read by default (NULL = no file):
 #define DEFAULT_CONFIG_FILE "default_config.cfg"
-
-// Maximum length of config file lines:
-#define CONFIG_LINE_MAXLEN 511
-
-// Maximum length of config key names (and values):
-#define CONFIG_KEY_MAXLEN 255
-
-// Maximum file path length:
-#define MAX_PATHLEN 255
 
 // Application version:
 #define VERSION_MAJOR 0
@@ -71,10 +59,6 @@
 
 // Filename and measurements of bacteria:
 #define BACTERIA_FILENAME	application::find_file("graphics/bacteria.bmp")
-#define BACTERIA_WIDTH		20
-#define BACTERIA_HEIGHT		20
-#define BACTERIA_CENTER_X	(BACTERIA_WIDTH / 2)
-#define BACTERIA_CENTER_Y	(BACTERIA_HEIGHT / 2)
 #define BACTERIA_ALPHA		(SDL_ALPHA_OPAQUE - 60)
 
 // Starting population of bacteria:
@@ -82,19 +66,12 @@
 // Starting amount of food nuggets:
 #define STARTING_FOOD	10
 
-// Acceptable error tolerance for collision detection:
-#define ACCEPTABLE_TOLERANCE	2
-
 // Distance that bacteria can smell food:
 #define FOOD_SMELLING_DISTANCE	50.0f
 
 // Food filename and measurements:
 #define FOOD_FILENAME	application::find_file("graphics/food.bmp")
-#define FOOD_WIDTH	20
-#define FOOD_HEIGHT	20
 #define FOOD_ALPHA	128
-#define FOOD_CENTER_X	FOOD_WIDTH / 2
-#define FOOD_CENTER_Y	FOOD_HEIGHT / 2
 
 // Energy contained in each food nugget:
 #define FOOD_ENERGY	800

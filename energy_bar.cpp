@@ -3,6 +3,7 @@
 /*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
+#include "application.h"
 #include "energy_bar.h"
 
 extern image * red_bar_segment;
@@ -10,7 +11,6 @@ extern image * yellow_bar_segment;
 extern image * green_bar_segment;
 
 extern config_db * config;
-extern SDL_Surface * screen;
 
 // Initializes the energy bar:
 energy_bar::energy_bar() : current_energy(0)
@@ -21,6 +21,7 @@ energy_bar::energy_bar() : current_energy(0)
 // Draws the energy bar at the specified coordinates:
 void energy_bar::draw(int x, int y)
 {
+	SDL_Surface * screen = application::get()->get_screen();
 	SDL_Rect dest;
 
 	int red_length = ENERGY_BAR_LENGTH * RED_PERCENT;

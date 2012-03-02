@@ -6,15 +6,12 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <cstdlib>
 #include <ctime>
-
+#include <list>
 #include <iostream>
 
 #include <SDL.h>
 #include <getopt.h>
-
-#include <list>
 
 #include "image.h"
 #include "statistics.h"
@@ -35,18 +32,28 @@
 class application
 {
 	public:
+		static application * init(int argc, char * argv[]);
+		static application * get() { return global_app; }
+		int run();
+
+		// Finds a file in the application search path:
+		static const char * find_file(const char * filename);
+
+		SDL_Surface * get_screen() const { return screen; }
+#ifndef DISABLE_SDLTTF
+		TTF_Font * get_font() const { return font; }
+#endif
+	private:
 		application();
 		~application();
 
-		bool init(int argc, char * argv[]);
-		int run();
+		// Clean up function, called by atexit:
+		static void cleanup();
 
-		static char * find_file(const char * filename);
-	private:
 		// Initialization functions:
 		bool init_cmd_args(int argc, char * argv[]);
 		bool init_config();
-		bool init_random();
+		void init_random();
 		bool init_sdl();
 		bool init_graphics();
 		bool init_logging();
@@ -61,9 +68,9 @@ class application
 		void display_version();
 
 		// Variables:
-		int option, counter, logging_interval;
+		int logging_interval;
 		int starting_pop, starting_food;
-		char * config_filename;
+		std::string config_filename;
 		bool display_coords, display_energy;
 		bool display_stats, graphical_energy_bar;
 		bool running;
@@ -71,12 +78,16 @@ class application
 		logger * data_logger;
 		statistics * stats;
 
-		SDL_Surface * window_icon;
+		SDL_Surface * window_icon, * screen;
 		SDL_TimerID refresh_timer, logger_timer;
+#ifndef DISABLE_SDLTTF
+		TTF_Font * font;
+#endif
 
-		std::list<bacteria> spawn_list;
 		std::list<bacteria>::iterator bacteria_iterator;
 		std::list<food>::iterator food_iterator;
+
+		static application * global_app;
 };
 
 #endif

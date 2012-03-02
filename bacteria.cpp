@@ -3,30 +3,25 @@
 /*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
+#include "application.h"
 #include "bacteria.h"
 
-extern SDL_Surface * screen;
-extern image * bacteria_image;
+using namespace std;
 
-#ifndef DISABLE_SDLTTF
-extern TTF_Font * font;
-#endif
+extern image * bacteria_image;
 
 bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_energy, int gen)
 	: alive(true), generation(gen), heading_for_food(false), at_food(false)
 {
-	if(init_energy == bacteria::default_starting_energy)
-	{
-		energy = config->get_int_value("BacteriaStartingEnergy");
-		if(energy == 0)
-			energy = STARTING_ENERGY;
-	} else
+	if(init_energy == 0)
+		energy = STARTING_ENERGY;
+	else
 		energy = init_energy;
 
 	speed = vector(angle == 0.0f ? (random() % 360) * (M_PI/180) : angle,
 		init_speed == 0.0f ? drand48() * (random() % 2) + 1 : init_speed,
-		ix == 0 ? random() % (config->get_int_value("ScreenWidth") - BACTERIA_WIDTH) : ix,
-		iy == 0 ? random() % (config->get_int_value("ScreenHeight") - BACTERIA_HEIGHT) : iy);
+		ix == 0 ? random() % (config->get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
+		iy == 0 ? random() % (config->get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
 
 	e_bar.set_energy(energy);
 }
@@ -44,29 +39,28 @@ void bacteria::draw()
 	position.x = floorf(speed.get_x());
 	position.y = floorf(speed.get_y());
 
-	SDL_BlitSurface(bacteria_image->get_image(), 0, screen, &position);
+	SDL_BlitSurface(bacteria_image->get_image(), 0, 
+		application::get()->get_screen(), &position);
 }
 
 void bacteria::draw_coords()
 {
 #ifndef DISABLE_SDLTTF
-	char * text = new char[COORDS_MAXLEN + 1];
 	SDL_Surface * temp = 0;
 	SDL_Rect destination;
+	stringstream text;
 
-	snprintf(text, COORDS_MAXLEN, "(%.2f, %.2f)", speed.get_x(), speed.get_y());
-	temp = TTF_RenderText_Solid(font, text, STATUS_TEXT_COLOR);
+	text << '(' << (int) speed.get_x() << ',' << (int) speed.get_y() << ')';
+	temp = TTF_RenderText_Solid(application::get()->get_font(),
+		text.str().c_str(), STATUS_TEXT_COLOR);
 
 	assert(temp != 0);
 
-	destination.x = speed.get_x() + BACTERIA_WIDTH;
+	destination.x = speed.get_x() + bacteria_image->get_width();
 	destination.y = speed.get_y();
 
-	SDL_BlitSurface(temp, 0, screen, &destination);
-
-	delete[] text;
-	if(temp != 0)
-		SDL_FreeSurface(temp);
+	SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
+	SDL_FreeSurface(temp);
 #endif
 }
 
@@ -74,35 +68,34 @@ void bacteria::draw_coords()
 void bacteria::draw_energy(bool graphically)
 {
 	if(graphically)
-	{
-		e_bar.draw(speed.get_x() + BACTERIA_WIDTH, speed.get_y() + ((BACTERIA_HEIGHT - ENERGY_BAR_HEIGHT) / 2));
-	} else {
+		e_bar.draw(speed.get_x() + bacteria_image->get_width(),
+			speed.get_y() + ((bacteria_image->get_height() - ENERGY_BAR_HEIGHT) / 2));
 #ifndef DISABLE_SDLTTF
-		char * text = new char[COORDS_MAXLEN + 1];
+	else {
 		SDL_Surface * temp = 0;
 		SDL_Rect destination;
+		stringstream text;
 
-		snprintf(text, COORDS_MAXLEN, "%d", energy);
-		temp = TTF_RenderText_Solid(font, text, STATUS_TEXT_COLOR);
+		text << energy;
+		temp = TTF_RenderText_Solid(application::get()->get_font(),
+			text.str().c_str(), STATUS_TEXT_COLOR);
 
 		assert(temp != 0);
 
-		destination.x = speed.get_x() + BACTERIA_WIDTH;
+		destination.x = speed.get_x() + bacteria_image->get_width();
 		destination.y = speed.get_y();
 
-		SDL_BlitSurface(temp, 0, screen, &destination);
-
-		delete[] text;
-		if(temp != 0)
-			SDL_FreeSurface(temp);
-#endif
+		SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
+		SDL_FreeSurface(temp);
 	}
+#endif
 }
 
 // Update the bacteria, return false if dead:
 bool bacteria::update()
 {
-	coordinate_pair_t bacteria_center = {speed.get_x() + BACTERIA_CENTER_X, speed.get_y() + BACTERIA_CENTER_Y};
+	coordinate_pair_t bacteria_center = {speed.get_x() + bacteria_image->get_width() / 2,
+		speed.get_y() + bacteria_image->get_height() / 2};
 	float temp_food_dist;
 
 	// Reduce the bacteria's energy supply:
@@ -118,8 +111,8 @@ bool bacteria::update()
 		return alive;
 
 	// Update the position of the bacteria:
-	speed.set_x(speed.get_x() + (cos(speed.get_angle()) * speed.get_magnitude()));
-	speed.set_y(speed.get_y() - (sin(speed.get_angle()) * speed.get_magnitude()));
+	speed.set_x(speed.get_x() + cos(speed.get_angle()) * speed.get_magnitude());
+	speed.set_y(speed.get_y() - sin(speed.get_angle()) * speed.get_magnitude());
 
 	// If heading for food, check if there is still food at the discovered food's
 	// location:
@@ -136,13 +129,13 @@ bool bacteria::update()
 	}
 
 	// Check for collision with the screen edges:
-	if(speed.get_x() >= (config->get_int_value("ScreenWidth") - BACTERIA_WIDTH)
+	if(speed.get_x() >= (config->get_int_value("ScreenWidth") - bacteria_image->get_width())
 		|| speed.get_x() <= 0.0f)
 	{
 		speed.set_angle(M_PI - speed.get_angle());
 	}
 
-	if(speed.get_y() >= (config->get_int_value("ScreenHeight") - BACTERIA_HEIGHT)
+	if(speed.get_y() >= (config->get_int_value("ScreenHeight") - bacteria_image->get_height())
 		|| speed.get_y() <= 0.0f)
 	{
 		speed.set_angle(speed.get_angle() - 2 * speed.get_angle());
@@ -174,7 +167,8 @@ void bacteria::set_destination(coordinate_pair_t destination)
 {
 	double new_angle;
 	float delta_x, delta_y;
-	coordinate_pair_t bacteria_center = {speed.get_x() + BACTERIA_CENTER_X, speed.get_y() + BACTERIA_CENTER_Y};
+	coordinate_pair_t bacteria_center = {speed.get_x() + bacteria_image->get_width() / 2,
+		speed.get_y() + bacteria_image->get_height() / 2};
 
 	food_loc = destination;
 	heading_for_food = true;
