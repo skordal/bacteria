@@ -47,7 +47,7 @@ application::application()
 	: config_filename(""), display_coords(false), display_energy(false),
 	  display_stats(true), graphical_energy_bar(true), running(true),
 	  starting_pop(STARTING_POP), starting_food(STARTING_FOOD),
-	  logging_interval(LOGGER_UPDATE_INTERVAL)
+	  logging_interval(LOGGER_UPDATE_INTERVAL), display_generation(false)
 {
 }
 
@@ -378,6 +378,8 @@ void application::handle_update()
 				temp.draw_coords();
 			if(display_energy)
 				temp.draw_energy(graphical_energy_bar);
+			if(display_generation)
+				temp.draw_generation();
 			bacteria_iterator++;
 		}
 	} else // if the bacteria list is empty, the simulation ends:
@@ -404,10 +406,11 @@ void application::handle_key(SDLKey key)
 			bacteria_list.push_back(bacteria());
 			stats->add_bacteria();
 			break;
-		case SDLK_f: // F - Add food nugget
-			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
-				random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
-			stats->add_food();
+		case SDLK_c: // C - Toggle display of coordinates of bacteria
+			if(display_coords)
+				display_coords = false;
+			else
+				display_coords = true;
 			break;
 		case SDLK_e: // E - Toggle energy bar for bacteria
 			if(display_energy)
@@ -415,12 +418,16 @@ void application::handle_key(SDLKey key)
 			else
 				display_energy = true;
 			break;
-
-		case SDLK_c: // C - Toggle display of coordinates of bacteria
-			if(display_coords)
-				display_coords = false;
+		case SDLK_f: // F - Add food nugget
+			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
+				random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
+			stats->add_food();
+			break;
+		case SDLK_g: // G - Toggle generation display
+			if(display_generation)
+				display_generation = false;
 			else
-				display_coords = true;
+				display_generation = true;
 			break;
 		case SDLK_s: // S - Toggle statistics
 			if(display_stats)

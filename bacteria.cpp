@@ -45,7 +45,7 @@ void bacteria::draw_coords() const
 }
 
 // Draw the energy bar or energy display:
-void bacteria::draw_energy(bool graphically)
+void bacteria::draw_energy(bool graphically) const
 {
 	if(graphically)
 		e_bar.draw(speed.get_x() + bacteria_image->get_width(),
@@ -56,6 +56,15 @@ void bacteria::draw_energy(bool graphically)
 		window::get()->draw(text.str(), speed.get_x() + bacteria_image->get_width(),
 			speed.get_y());
 	}
+}
+
+// Draws the generation of the bacteria:
+void bacteria::draw_generation() const
+{
+	stringstream text;
+	text << generation;
+	window::get()->draw(text.str(), speed.get_x() + bacteria_image->get_width(),
+		speed.get_y());
 }
 
 // Update the bacteria, return false if dead:

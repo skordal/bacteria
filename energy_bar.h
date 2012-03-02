@@ -19,7 +19,7 @@ class energy_bar
 
 		void set_energy(int energy) { current_energy = energy; }
 		void update(int energy = 0) { current_energy += energy; }
-		void draw(int x, int y);
+		void draw(int x, int y) const;
 
 		energy_bar & operator+=(int energy);
 

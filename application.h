@@ -67,7 +67,7 @@ class application
 		int logging_interval;
 		int starting_pop, starting_food;
 		std::string config_filename;
-		bool display_coords, display_energy;
+		bool display_coords, display_energy, display_generation;
 		bool display_stats, graphical_energy_bar;
 		bool running;
 
