@@ -23,7 +23,7 @@ class statistics
 		statistics(int bacteria = STARTING_POP, int food = STARTING_FOOD);
 
 		void update();
-		void draw();
+		void draw() const;
 
 		void set_game_over() { game_over = true; }
 		bool get_game_over() const { return game_over; }

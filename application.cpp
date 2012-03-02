@@ -44,7 +44,7 @@ static struct option cmd_options[] = {
 };
 
 application::application()
-	: config_filename(""), window_icon(0), display_coords(false), display_energy(false),
+	: config_filename(""), display_coords(false), display_energy(false),
 	  display_stats(true), graphical_energy_bar(true), running(true),
 	  starting_pop(STARTING_POP), starting_food(STARTING_FOOD),
 	  logging_interval(LOGGER_UPDATE_INTERVAL)
@@ -71,12 +71,14 @@ application * application::init(int argc, char * argv[])
 		goto _skip_init;
 	}
 
-	if(!global_app->init_sdl())
+	global_app->main_window = window::create(config->get_int_value("ScreenWidth"),
+		config->get_int_value("ScreenHeight"));
+	if(global_app->main_window == 0)
 	{
 		retval = false;
 		goto _skip_init;
 	}
-	
+
 	if(!global_app->init_graphics())
 	{
 		retval = false;
@@ -196,51 +198,6 @@ void application::init_random()
 	srandom(time(0));
 }
 
-// This function initializes SDL:
-bool application::init_sdl()
-{
-	clog << "Initializing SDL..." << endl;
-	if(SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO) == -1)
-		return false;
-
-	clog << "Initializing SDL_ttf..." << endl;
-	if(TTF_Init() == -1)
-		return false;
-
-	font = TTF_OpenFont(STATUS_FONT, STATUS_FONT_SIZE);
-	if(font == 0)
-	{
-		cerr << "ERROR: Could not load font " << STATUS_FONT << endl;
-		return false;
-	}
-
-	clog << "Creating main window (" << config->get_int_value("ScreenWidth")
-		<< " x " << config->get_int_value("ScreenHeight") << ")..." << endl;
-	screen = SDL_SetVideoMode(config->get_int_value("ScreenWidth"),
-		config->get_int_value("ScreenHeight"), 0,
-		config->get_bool_value("Fullscreen") ?
-			SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN
-			: SDL_HWSURFACE|SDL_DOUBLEBUF);
-
-	if(screen == 0)
-	{
-		cerr << "ERROR: Could not create main window!" << endl;
-		return false;
-	}
-	SDL_WM_SetCaption("Bacteria Simulator", "Bacteria");
-
-	window_icon = SDL_LoadBMP(ICON_FILENAME);
-	if(window_icon != 0)
-	{
-		SDL_SetColorKey(window_icon, SDL_SRCCOLORKEY,
-			SDL_MapRGB(window_icon->format, 255, 0, 255));
-		SDL_WM_SetIcon(window_icon, 0);
-	} else 
-		cerr << "WARNING: Could not load icon file: " << ICON_FILENAME << endl;
-	
-	return true;
-}
-
 // This function sets up data logging:
 bool application::init_logging()
 {
@@ -353,7 +310,7 @@ void application::handle_update()
 	counter++;
 
 	// Clear the screen:
-	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B));
+	main_window->clear();
 
 	// Check if it's time for a new food nugget to spawn:
 	if(counter >= config->get_int_value("FoodSpawningRate") && !stats->get_game_over())
@@ -435,7 +392,7 @@ void application::handle_update()
 	if(display_stats)
 		stats->draw();
 
-	SDL_Flip(screen);
+	main_window->flip_buffers();
 }
 
 // Handles a keyboard press:
@@ -520,20 +477,16 @@ application::~application()
 	if(!food_list.empty())
 		food_list.clear();
 
+	// Delete all the images:
 	delete bacteria_image;
 	delete food_image;
-
 	delete red_bar_segment;
 	delete yellow_bar_segment;
 	delete green_bar_segment;
 
+	// Delete the statistic classes:
 	delete data_logger;
 	delete stats;
-
-	TTF_CloseFont(font);
-	TTF_Quit();
-
-	SDL_Quit();
 }
 
 // Callback for the screen refresh timer (post an SDL_USEREVENT):

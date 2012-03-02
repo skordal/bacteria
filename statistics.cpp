@@ -35,15 +35,12 @@ void statistics::update()
 	calc_avg_growth();
 }
 
-void statistics::draw()
+void statistics::draw() const
 {
-	SDL_Surface * temp;
-	SDL_Rect destination;
 	stringstream message_buffer;
 
 	// Upper statistics display:
-	message_buffer
-		<< "Bacteria: " << setfill('0') << setw(bacteria_digits) << bacteria
+	message_buffer << "Bacteria: " << setfill('0') << setw(bacteria_digits) << bacteria
 		<< " | Food nuggets: " << setw(food_digits) << food
 		<< " | Most bacteria: " << setw(peak_bacteria_digits) << peak_pop
 		<< " | Most food: " << setw(peak_food_digits) << peak_food
@@ -52,15 +49,7 @@ void statistics::draw()
 			<< setw(2) << running_minutes << " m, "
 			<< setw(2) << running_seconds << " s";
 
-	temp = TTF_RenderText_Solid(application::get()->get_font(),
-		message_buffer.str().c_str(), STATUS_TEXT_COLOR);
-	if(temp == 0)
-		cerr << "WARNING: Could not render top text!" << endl;
-	else
-		SDL_BlitSurface(temp, 0, application::get()->get_screen(), 0);
-	
-	if(temp != 0)
-		SDL_FreeSurface(temp);
+	window::get()->draw(message_buffer.str(), 0, 0);
 
 	// Lower statistics display:
 	message_buffer.str("");
@@ -74,18 +63,8 @@ void statistics::draw()
 	if(game_over)
 		message_buffer << " | SIMULATION ENDED.";
 
-	temp = TTF_RenderText_Solid(application::get()->get_font(),
-		message_buffer.str().c_str(), STATUS_TEXT_COLOR);
-	if(temp == 0)
-		cerr << "WARNING: Could not render buttom text!" << endl;
-	else {
-		destination.x = 0;
-		destination.y = config->get_int_value("ScreenHeight") - temp->h;
-		SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
-	}
-
-	if(temp != 0)
-		SDL_FreeSurface(temp);
+	window::get()->draw(message_buffer.str(), 0, config->get_int_value("ScreenHeight") -
+			window::get()->get_font_height());
 }
 
 // Simply calculated from the current number of bacteria.

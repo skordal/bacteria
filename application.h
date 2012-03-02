@@ -15,14 +15,15 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#include "image.h"
-#include "statistics.h"
 #include "bacteria.h"
-#include "food.h"
-#include "logger.h"
+#include "config.h"
 #include "config_db.h"
 #include "config_parser.h"
-#include "config.h"
+#include "food.h"
+#include "image.h"
+#include "logger.h"
+#include "statistics.h"
+#include "window.h"
 
 #define UPDATE_EVENT {SDL_USEREVENT, 0, NULL, NULL}
 #define LOGGER_EVENT {SDL_USEREVENT, 1, NULL, NULL}
@@ -32,13 +33,12 @@ class application
 	public:
 		static application * init(int argc, char * argv[]);
 		static application * get() { return global_app; }
+
+		// Runs the simulator:
 		int run();
 
 		// Finds a file in the application search path:
 		static const char * find_file(const char * filename);
-
-		SDL_Surface * get_screen() const { return screen; }
-		TTF_Font * get_font() const { return font; }
 	private:
 		application();
 		~application();
@@ -50,7 +50,6 @@ class application
 		bool init_cmd_args(int argc, char * argv[]);
 		bool init_config();
 		void init_random();
-		bool init_sdl();
 		bool init_graphics();
 		bool init_logging();
 		bool init_populations();
@@ -74,9 +73,8 @@ class application
 		logger * data_logger;
 		statistics * stats;
 
-		SDL_Surface * window_icon, * screen;
+		window * main_window;
 		SDL_TimerID refresh_timer, logger_timer;
-		TTF_Font * font;
 
 		std::list<bacteria>::iterator bacteria_iterator;
 		std::list<food>::iterator food_iterator;

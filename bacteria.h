@@ -13,13 +13,13 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#include "vector.h"
-#include "image.h"
-#include "energy_bar.h"
-#include "config_db.h"
 #include "config.h"
+#include "config_db.h"
+#include "energy_bar.h"
+#include "image.h"
+#include "vector.h"
 
-class bacteria
+class bacteria 
 {
 	public:
 		bacteria(double angle = 0.0f,		// Starting direction
@@ -29,8 +29,8 @@ class bacteria
 			int init_energy = 0,		// Initial energy
 			int gen = 1);			// Which generation typically (parent + 1)
 
-		void draw();
-		void draw_coords();
+		void draw() const;
+		void draw_coords() const;
 		void draw_energy(bool graphically = true);
 
 		bool update(); // Returns false if the bacteria is dead.

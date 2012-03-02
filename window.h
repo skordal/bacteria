@@ -6,8 +6,10 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -24,8 +26,15 @@ class window
 		// error message is printed and 0 is returned.
 		static window * create(int width, int height);
 
+		// Gets the application window:
+		static window * get() { return main_window; }
+		
 		// Draws an image to the window:
 		void draw(const image & img, int x, int y);
+		void draw(const std::string & text, int x, int y);
+
+		// Returns the height of the font:
+		int get_font_height() { return TTF_FontHeight(font); }
 
 		// Clears the window:
 		void clear();
@@ -41,6 +50,7 @@ class window
 		SDL_Surface * screen, * window_icon;
 		TTF_Font * font;
 
+		// The application's main window:
 		static window * main_window;
 };
 

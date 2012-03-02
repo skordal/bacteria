@@ -16,7 +16,7 @@ window * window::main_window = 0;
 // Creates the main window:
 window * window::create(int width, int height)
 {
-	if(main_window == 0)
+	if(main_window != 0)
 	{
 		cerr << "WARNING: Main window already created!" << endl;
 		return 0;
@@ -47,12 +47,14 @@ window * window::create(int width, int height)
 	// Finally, create the main window, if possible:
 	try {
 		main_window = new window(width, height);
-		atexit(main_window::cleanup);
+		atexit(window::cleanup);
 	} catch(exception & error)
 	{
 		cerr << "ERROR: " << error.what() << endl;
 		return 0;
 	}
+
+	return main_window;
 }
 
 // Draws an image to the screen:
@@ -63,7 +65,25 @@ void window::draw(const image & img, int x, int y)
 	position.x = x;
 	position.y = y;
 
-	SDL_BlitSurface(image.get_image(), 0, screen, &position);
+	SDL_BlitSurface(img.get_image(), 0, screen, &position);
+}
+
+// Draws a string to the screen:
+void window::draw(const string & text, int x, int y)
+{
+	SDL_Rect position;
+	SDL_Surface * temp = TTF_RenderText_Solid(font, text.c_str(), STATUS_TEXT_COLOR);
+
+	if(temp == 0)
+	{
+		cerr << "WARNING: Could not render string: \"" << text << "\"" << endl;
+		return;
+	}
+
+	position.x = x;
+	position.y = y;
+	SDL_BlitSurface(temp, 0, screen, &position);
+	SDL_FreeSurface(temp);
 }
 
 window::window(int width, int height)

@@ -32,34 +32,16 @@ void bacteria::reproduce()
 	e_bar.update(-config->get_int_value("ReproductionEnergy") / 2);
 }
 
-void bacteria::draw()
+void bacteria::draw() const
 {
-	SDL_Rect position;
-	
-	position.x = floorf(speed.get_x());
-	position.y = floorf(speed.get_y());
-
-	SDL_BlitSurface(bacteria_image->get_image(), 0, 
-		application::get()->get_screen(), &position);
+	window::get()->draw(*bacteria_image, speed.get_x(), speed.get_y());
 }
 
-void bacteria::draw_coords()
+void bacteria::draw_coords() const
 {
-	SDL_Surface * temp;
-	SDL_Rect destination;
 	stringstream text;
-
 	text << '(' << (int) speed.get_x() << ',' << (int) speed.get_y() << ')';
-	temp = TTF_RenderText_Solid(application::get()->get_font(),
-		text.str().c_str(), STATUS_TEXT_COLOR);
-
-	assert(temp != 0);
-
-	destination.x = speed.get_x() + bacteria_image->get_width();
-	destination.y = speed.get_y();
-
-	SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
-	SDL_FreeSurface(temp);
+	window::get()->draw(text.str(), speed.get_x(), speed.get_y());
 }
 
 // Draw the energy bar or energy display:
@@ -69,21 +51,10 @@ void bacteria::draw_energy(bool graphically)
 		e_bar.draw(speed.get_x() + bacteria_image->get_width(),
 			speed.get_y() + ((bacteria_image->get_height() - ENERGY_BAR_HEIGHT) / 2));
 	else {
-		SDL_Surface * temp = 0;
-		SDL_Rect destination;
 		stringstream text;
-
 		text << energy;
-		temp = TTF_RenderText_Solid(application::get()->get_font(),
-			text.str().c_str(), STATUS_TEXT_COLOR);
-
-		assert(temp != 0);
-
-		destination.x = speed.get_x() + bacteria_image->get_width();
-		destination.y = speed.get_y();
-
-		SDL_BlitSurface(temp, 0, application::get()->get_screen(), &destination);
-		SDL_FreeSurface(temp);
+		window::get()->draw(text.str(), speed.get_x() + bacteria_image->get_width(),
+			speed.get_y());
 	}
 }
 
