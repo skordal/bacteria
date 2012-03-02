@@ -10,17 +10,12 @@ using namespace std;
 
 extern image * bacteria_image;
 
-#ifndef DISABLE_SDLTTF
-extern TTF_Font * font;
-#endif
-
 bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_energy, int gen)
 	: alive(true), generation(gen), heading_for_food(false), at_food(false)
 {
 	if(init_energy == bacteria::default_starting_energy)
-	{
 		energy = STARTING_ENERGY;
-	} else
+	else
 		energy = init_energy;
 
 	speed = vector(angle == 0.0f ? (random() % 360) * (M_PI/180) : angle,
@@ -116,8 +111,8 @@ bool bacteria::update()
 		return alive;
 
 	// Update the position of the bacteria:
-	speed.set_x(speed.get_x() + (cos(speed.get_angle()) * speed.get_magnitude()));
-	speed.set_y(speed.get_y() - (sin(speed.get_angle()) * speed.get_magnitude()));
+	speed.set_x(speed.get_x() + cos(speed.get_angle()) * speed.get_magnitude());
+	speed.set_y(speed.get_y() - sin(speed.get_angle()) * speed.get_magnitude());
 
 	// If heading for food, check if there is still food at the discovered food's
 	// location:
