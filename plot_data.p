@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 # GNUPlot Instructions for graphing bacteria population and food levels
-# (c) Kristian K. Skordal 2009
+# (c) Kristian K. Skordal 2009 - 2012 <kristian.skordal@gmail.com>
 
 set autoscale
 set title "Correlation between bacteria population and food levels"
