@@ -56,7 +56,8 @@ void bacteria::draw_coords()
 	stringstream text;
 
 	text << '(' << (int) speed.get_x() << ',' << (int) speed.get_y() << ')';
-	temp = TTF_RenderText_Solid(font, text.str().c_str(), STATUS_TEXT_COLOR);
+	temp = TTF_RenderText_Solid(application::get()->get_font(),
+		text.str().c_str(), STATUS_TEXT_COLOR);
 
 	assert(temp != 0);
 
@@ -81,7 +82,8 @@ void bacteria::draw_energy(bool graphically)
 		stringstream text;
 
 		text << energy;
-		temp = TTF_RenderText_Solid(font, text.str().c_str(), STATUS_TEXT_COLOR);
+		temp = TTF_RenderText_Solid(application::get()->get_font(),
+			text.str().c_str(), STATUS_TEXT_COLOR);
 
 		assert(temp != 0);
 

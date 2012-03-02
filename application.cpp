@@ -7,11 +7,6 @@
 
 using namespace std;
 
-#ifndef DISABLE_SDLTTF
-// Global font:
-TTF_Font * font;
-#endif
-
 // Global image variables:
 image * bacteria_image, * food_image;
 image * red_bar_segment, * yellow_bar_segment, * green_bar_segment;

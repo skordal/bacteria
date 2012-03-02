@@ -58,7 +58,8 @@ void statistics::draw()
 			<< setw(2) << running_minutes << " m, "
 			<< setw(2) << running_seconds << " s";
 
-	temp = TTF_RenderText_Solid(font, message_buffer.str().c_str(), STATUS_TEXT_COLOR);
+	temp = TTF_RenderText_Solid(application::get()->get_font(),
+		message_buffer.str().c_str(), STATUS_TEXT_COLOR);
 	if(temp == 0)
 		cerr << "WARNING: Could not render top text!" << endl;
 	else
@@ -79,7 +80,8 @@ void statistics::draw()
 	if(game_over)
 		message_buffer << " | SIMULATION ENDED.";
 
-	temp = TTF_RenderText_Solid(font, message_buffer.str().c_str(), STATUS_TEXT_COLOR);
+	temp = TTF_RenderText_Solid(application::get()->get_font(),
+		message_buffer.str().c_str(), STATUS_TEXT_COLOR);
 	if(temp == 0)
 		cerr << "WARNING: Could not render buttom text!" << endl;
 	else {

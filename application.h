@@ -7,12 +7,11 @@
 #define APPLICATION_H
 
 #include <ctime>
+#include <list>
 #include <iostream>
 
 #include <SDL.h>
 #include <getopt.h>
-
-#include <list>
 
 #include "image.h"
 #include "statistics.h"
@@ -41,6 +40,9 @@ class application
 		static const char * find_file(const char * filename);
 
 		SDL_Surface * get_screen() const { return screen; }
+#ifndef DISABLE_SDLTTF
+		TTF_Font * get_font() const { return font; }
+#endif
 	private:
 		application();
 		~application();
@@ -78,6 +80,9 @@ class application
 
 		SDL_Surface * window_icon, * screen;
 		SDL_TimerID refresh_timer, logger_timer;
+#ifndef DISABLE_SDLTTF
+		TTF_Font * font;
+#endif
 
 		std::list<bacteria>::iterator bacteria_iterator;
 		std::list<food>::iterator food_iterator;
