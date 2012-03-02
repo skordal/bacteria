@@ -18,6 +18,9 @@ E
 F
 	- Adds a food nugget at a random location.
 
+G
+	- Toggles the display of the bacteria's generation.
+
 Q/Escape
 	- Exits the application.
 

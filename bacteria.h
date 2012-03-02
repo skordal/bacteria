@@ -31,7 +31,8 @@ class bacteria
 
 		void draw() const;
 		void draw_coords() const;
-		void draw_energy(bool graphically = true);
+		void draw_energy(bool graphically = true) const;
+		void draw_generation() const;
 
 		bool update(); // Returns false if the bacteria is dead.
 		bool is_alive() const { return alive; }

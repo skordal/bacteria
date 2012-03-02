@@ -19,7 +19,7 @@ energy_bar::energy_bar() : current_energy(0)
 }
 
 // Draws the energy bar at the specified coordinates:
-void energy_bar::draw(int x, int y)
+void energy_bar::draw(int x, int y) const
 {
 	int red_length = ENERGY_BAR_LENGTH * RED_PERCENT;
 	int yellow_length = ENERGY_BAR_LENGTH * YELLOW_PERCENT;
