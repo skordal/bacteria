@@ -19,7 +19,6 @@ class info_field
 		typedef enum {
 			GENERATION,
 			ANCESTOR,
-			ENERGY,
 			ENERGY_BAR,
 			POSITION,
 			NONE

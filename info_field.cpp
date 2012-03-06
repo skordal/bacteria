@@ -30,15 +30,12 @@ void info_field::draw() const
 		case GENERATION:
 			text << owner.generation;
 			break;
-		case ENERGY:
-			text << owner.energy;
-			break;
 		case ENERGY_BAR:
 			ebar.draw(owner.speed.get_x() + bacteria_image->get_width(),
 				owner.speed.get_y() + (bacteria_image->get_height() - ENERGY_BAR_HEIGHT) / 2);
 			return;
 		case POSITION:
-			text << '(' << owner.speed.get_x() << ", " << owner.speed.get_y() << ')';
+			text << '(' << (int) owner.speed.get_x() << ", " << (int) owner.speed.get_y() << ')';
 			break;
 	}
 	window::get()->draw(text.str(), owner.speed.get_x() + bacteria_image->get_width(), owner.speed.get_y());
