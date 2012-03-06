@@ -22,5 +22,7 @@ To build on other platforms, you will have to find your own way. CMake is
 multi-platform, as is SDL, so it is possible, but Bacteria has not been tested
 on anything other than Linux.
 
+The code is MIT licensed, see the COPYING file for details.
+
 Please report any issues on <http://github.com/skordal/bacteria/issues>.
 
