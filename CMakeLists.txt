@@ -11,6 +11,7 @@ set(SOURCE_FILES
 	energy_bar.cpp
 	food.cpp
 	image.cpp
+	info_field.cpp
 	logger.cpp
 	main.cpp
 	statistics.cpp

@@ -10,8 +10,8 @@ using namespace std;
 
 extern image * bacteria_image;
 
-bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_energy, int gen)
-	: alive(true), generation(gen), heading_for_food(false), at_food(false)
+bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_energy, int gen, int ancestor)
+	: alive(true), generation(gen), heading_for_food(false), at_food(false), ancestor(ancestor)
 {
 	if(init_energy == 0)
 		energy = STARTING_ENERGY;
@@ -22,49 +22,16 @@ bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_ener
 		init_speed == 0.0f ? drand48() * (random() % 2) + 1 : init_speed,
 		ix == 0 ? random() % (config->get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
 		iy == 0 ? random() % (config->get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
-
-	e_bar.set_energy(energy);
 }
 
 void bacteria::reproduce()
 {
 	energy = config->get_int_value("ReproductionEnergy") / 2;
-	e_bar.update(-config->get_int_value("ReproductionEnergy") / 2);
 }
 
 void bacteria::draw() const
 {
 	window::get()->draw(*bacteria_image, speed.get_x(), speed.get_y());
-}
-
-void bacteria::draw_coords() const
-{
-	stringstream text;
-	text << '(' << (int) speed.get_x() << ',' << (int) speed.get_y() << ')';
-	window::get()->draw(text.str(), speed.get_x(), speed.get_y());
-}
-
-// Draw the energy bar or energy display:
-void bacteria::draw_energy(bool graphically) const
-{
-	if(graphically)
-		e_bar.draw(speed.get_x() + bacteria_image->get_width(),
-			speed.get_y() + ((bacteria_image->get_height() - ENERGY_BAR_HEIGHT) / 2));
-	else {
-		stringstream text;
-		text << energy;
-		window::get()->draw(text.str(), speed.get_x() + bacteria_image->get_width(),
-			speed.get_y());
-	}
-}
-
-// Draws the generation of the bacteria:
-void bacteria::draw_generation() const
-{
-	stringstream text;
-	text << generation;
-	window::get()->draw(text.str(), speed.get_x() + bacteria_image->get_width(),
-		speed.get_y());
 }
 
 // Update the bacteria, return false if dead:
@@ -76,7 +43,6 @@ bool bacteria::update()
 
 	// Reduce the bacteria's energy supply:
 	--energy;
-	--e_bar;
 
 	// Check if it died due to lack of energy:
 	if(energy <= 0)
@@ -123,7 +89,6 @@ bool bacteria::update()
 int bacteria::feed()
 {
 	energy += config->get_int_value("FeedingEnergy");
-	e_bar += config->get_int_value("FeedingEnergy");
 	return config->get_int_value("FeedingEnergy");
 }
 

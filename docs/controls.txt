@@ -1,10 +1,10 @@
 Keyboard Controls for Bacteria
 ##############################
 
-Please note that Bacteria is a simulator, therefore there will never be any way
-to control the bacteria. Your role is to watch life unfold :)
-
 Available controls:
+
+A
+	- Shows the number of the bacteria's ancestor.
 
 B
 	- Adds a bacteria at a random location.
@@ -26,6 +26,3 @@ Q/Escape
 
 S
 	- Hides or displays the statistics.
-
-T
-	- Toggles between text energy display or graphical energy display.
