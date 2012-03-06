@@ -56,7 +56,9 @@ application * application::init(int argc, char * argv[])
 {
 	bool retval = true;
 	global_app = new application();
-	global_app->init_random();
+
+	// Seed the random number generator:
+	srandom(time(0));
 
 	if(!global_app->init_cmd_args(argc, argv))
 	{
@@ -187,13 +189,6 @@ bool application::init_config()
 		delete config_file;
 
 	return true;
-}
-
-// This function initializes the random number generator:
-void application::init_random()
-{
-	clog << "Initializing random number generator..." << endl;
-	srandom(time(0));
 }
 
 // This function sets up data logging:

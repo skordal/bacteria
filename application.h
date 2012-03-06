@@ -54,7 +54,6 @@ class application
 		// Initialization functions:
 		bool init_cmd_args(int argc, char * argv[]);
 		bool init_config();
-		void init_random();
 		bool init_graphics();
 		bool init_logging();
 		bool init_populations();
