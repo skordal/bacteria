@@ -19,7 +19,7 @@
 class logger
 {
 	public:
-		logger(statistics * stats, const std::string & filename = DATALOG_FILENAME,
+		logger(statistics & stats, const std::string & filename = DATALOG_FILENAME,
 			int update_interval = LOGGER_UPDATE_INTERVAL);
 		~logger();
 
@@ -28,7 +28,7 @@ class logger
 		float current_time;
 		int interval, peak_pop;
 		std::ofstream logfile;
-		statistics * stats;
+		statistics & stats;
 };
 
 #endif

@@ -204,7 +204,7 @@ bool application::init_logging()
 		config->get_int_value("StartingFood"));
 
 	clog << "Creating data logger..." << endl;
-	data_logger = new logger(stats, config->get_string_value("DatalogFilename"),
+	data_logger = new logger(*stats, config->get_string_value("DatalogFilename"),
 		config->get_int_value("LoggerUpdateInterval"));
 
 	return true;
