@@ -15,7 +15,7 @@
 class energy_bar
 {
 	public:
-		energy_bar();
+		energy_bar(int energy);
 
 		void set_energy(int energy) { current_energy = energy; }
 		void update(int energy = 0) { current_energy += energy; }

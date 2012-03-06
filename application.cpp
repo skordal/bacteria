@@ -44,10 +44,9 @@ static struct option cmd_options[] = {
 };
 
 application::application()
-	: config_filename(""), display_coords(false), display_energy(false),
-	  display_stats(true), graphical_energy_bar(true), running(true),
+	: config_filename(""), info_mode(info_field::NONE), running(true),
 	  starting_pop(STARTING_POP), starting_food(STARTING_FOOD),
-	  logging_interval(LOGGER_UPDATE_INTERVAL), display_generation(false)
+	  logging_interval(LOGGER_UPDATE_INTERVAL), display_stats(true)
 {
 }
 
@@ -237,7 +236,13 @@ bool application::init_populations()
 	// Create bacteria:
 	clog << "Creating initial bacteria population..." << endl;
 	for(int c = 0; c < config->get_int_value("StartingPopulation"); c++)
-		bacteria_list.push_back(bacteria());
+	{
+		bacteria bact;
+		bact.set_ancestor(c);
+		bacteria_list.push_back(bact);
+	}
+
+	ancestor_counter = config->get_int_value("StartingPopulation");
 
 	// Create food:
 	clog << "Creating initial food nuggets..." << endl;
@@ -360,7 +365,7 @@ void application::handle_update()
 				spawn_list.push_back(bacteria(temp.get_vector().get_angle() + M_PI,
 					temp.get_vector().get_magnitude(), temp.get_vector().get_x(),
 					temp.get_vector().get_y(), REPRODUCTION_ENERGY / 2,
-					temp.get_generation() + 1));
+					temp.get_generation() + 1, temp.get_ancestor()));
 				stats->add_bacteria(spawn_list.back().get_generation());
 			}
 
@@ -372,14 +377,11 @@ void application::handle_update()
 				continue;
 			}
 
-			// Draw bacteria and any annotations attached to it:
+			// Draw bacteria:
 			temp.draw();
-			if(display_coords)
-				temp.draw_coords();
-			if(display_energy)
-				temp.draw_energy(graphical_energy_bar);
-			if(display_generation)
-				temp.draw_generation();
+			// Draw an info field for the bacteria:
+			info_field(temp).draw();
+
 			bacteria_iterator++;
 		}
 	} else // if the bacteria list is empty, the simulation ends:
@@ -400,23 +402,32 @@ void application::handle_update()
 // Handles a keyboard press:
 void application::handle_key(SDLKey key)
 {
+	bacteria new_bacteria;
+
 	switch(key)
 	{
+		case SDLK_a: // A - Shows a bacteria's ancestor:
+			if(info_mode != info_field::ANCESTOR)
+				info_mode = info_field::ANCESTOR;
+			else
+				info_mode = info_field::NONE;
+			break;
 		case SDLK_b: // B - Add new bacteria
-			bacteria_list.push_back(bacteria());
+			new_bacteria.set_ancestor(++ancestor_counter);
+			bacteria_list.push_back(new_bacteria);
 			stats->add_bacteria();
 			break;
 		case SDLK_c: // C - Toggle display of coordinates of bacteria
-			if(display_coords)
-				display_coords = false;
+			if(info_mode != info_field::POSITION)
+				info_mode = info_field::POSITION;
 			else
-				display_coords = true;
+				info_mode = info_field::NONE;
 			break;
 		case SDLK_e: // E - Toggle energy bar for bacteria
-			if(display_energy)
-				display_energy = false;
+			if(info_mode != info_field::ENERGY_BAR)
+				info_mode = info_field::ENERGY_BAR;
 			else
-				display_energy = true;
+				info_mode = info_field::NONE;
 			break;
 		case SDLK_f: // F - Add food nugget
 			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
@@ -424,22 +435,16 @@ void application::handle_key(SDLKey key)
 			stats->add_food();
 			break;
 		case SDLK_g: // G - Toggle generation display
-			if(display_generation)
-				display_generation = false;
+			if(info_mode != info_field::GENERATION)
+				info_mode = info_field::GENERATION;
 			else
-				display_generation = true;
+				info_mode = info_field::NONE;
 			break;
 		case SDLK_s: // S - Toggle statistics
 			if(display_stats)
 				display_stats = false;
 			else
 				display_stats = true;
-			break;
-		case SDLK_t: // T - Toggle graphical or text energy display
-			if(graphical_energy_bar)
-				graphical_energy_bar = false;
-			else
-				graphical_energy_bar = true;
 			break;
 		case SDLK_ESCAPE: // ESCAPE, Q - Exit application
 		case SDLK_q:

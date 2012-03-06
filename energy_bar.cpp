@@ -13,7 +13,7 @@ extern image * green_bar_segment;
 extern config_db * config;
 
 // Initializes the energy bar:
-energy_bar::energy_bar() : current_energy(0)
+energy_bar::energy_bar(int energy) : current_energy(energy)
 {
 	max_energy = config->get_int_value("ReproductionEnergy");
 }

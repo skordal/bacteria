@@ -22,6 +22,7 @@
 #include "config_parser.h"
 #include "food.h"
 #include "image.h"
+#include "info_field.h"
 #include "logger.h"
 #include "statistics.h"
 #include "window.h"
@@ -37,6 +38,9 @@ class application
 
 		// Runs the simulator:
 		int run();
+
+		// Returns the current info mode for printing various bacteria information:
+		info_field::mode get_info_mode() const { return info_mode; }
 
 		// Finds a file in the application search path:
 		static const char * find_file(const char * filename);
@@ -65,11 +69,11 @@ class application
 
 		// Variables:
 		int logging_interval;
+		int ancestor_counter;
 		int starting_pop, starting_food;
 		std::string config_filename;
-		bool display_coords, display_energy, display_generation;
-		bool display_stats, graphical_energy_bar;
-		bool running;
+		info_field::mode info_mode;
+		bool display_stats, running;
 
 		logger * data_logger;
 		statistics * stats;
