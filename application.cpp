@@ -252,8 +252,10 @@ bool application::init_populations()
 	// Create food:
 	clog << "Creating initial food nuggets..." << endl;
 	for(int c = 0; c < config->get_int_value("StartingFood"); c++)
+	{
 		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
 			random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
+	}
 
 	return true;
 }

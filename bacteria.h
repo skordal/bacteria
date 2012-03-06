@@ -66,7 +66,7 @@ class bacteria
 		int generation;
 		int ancestor;
 		bool alive, heading_for_food, at_food;
-		float init_food_dist, prev_food_dist;
+		float prev_food_dist;
 
 		vector speed;
 		coordinate_pair_t food_loc;

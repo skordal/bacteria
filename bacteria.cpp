@@ -106,8 +106,9 @@ void bacteria::release(bool new_dir)
 
 void bacteria::set_destination(coordinate_pair_t destination)
 {
-	double new_angle;
+	double new_angle, init_food_dist;
 	float delta_x, delta_y;
+
 	coordinate_pair_t bacteria_center = {speed.get_x() + bacteria_image->get_width() / 2,
 		speed.get_y() + bacteria_image->get_height() / 2};
 
