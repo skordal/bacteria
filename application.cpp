@@ -216,7 +216,7 @@ bool application::init_graphics()
 		red_bar_segment = new image(RED_BAR_SEGMENT);
 		yellow_bar_segment = new image(YELLOW_BAR_SEGMENT);
 		green_bar_segment = new image(GREEN_BAR_SEGMENT);
-	} catch(exception & error)
+	} catch(const exception & error)
 	{
 		cerr << "Error: " << error.what() << endl;
 		return false;
