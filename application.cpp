@@ -20,7 +20,7 @@ list<food> food_list;
 application * application::global_app = 0;
 
 // Timer callback functions:
-Uint32 timer_callback(Uint32 interval, void * unused);
+Uint32 timer_callback(Uint32 interval, void * unused __attribute((unused)));
 Uint32 logger_timer_cb(Uint32 interval, void * logger_object);
 
 // Search path for finding image files:
@@ -164,7 +164,7 @@ bool application::init_config()
 {
 	config_parser * config_file = 0;
 
-	clog << "Reading configuration..." << endl;
+	// Create the default configuration database:
 	config = new config_db();
 
 	// Check if command line arguments override the default settings.
@@ -177,12 +177,18 @@ bool application::init_config()
 	if(logging_interval != config->get_int_value("LoggerUpdateInterval"))
 		config->set_value("LoggerUpdateInterval", logging_interval);
 
+	// If the config filename is not empty, parse the config file.
+	// The configuration file overrides command line arguments at the moment.
 	if(!config_filename.empty())
 	{
-		clog << "Using configuration file " << config_filename << "..." << endl;
+		clog << "Using configuration file " << config_filename << "... ";
 		config_file = new config_parser(config, config_filename);
 		if(!config_file->parse())
+		{
+			clog << "failed!" << endl;
 			return false;
+		} else
+			clog << "ok" << endl;
 	}
 
 	if(config_file != 0)
@@ -194,13 +200,15 @@ bool application::init_config()
 // This function sets up data logging:
 bool application::init_logging()
 {
-	clog << "Initializing statistics..." << endl;
+	clog << "Initializing statistics... ";
 	stats = new statistics(config->get_int_value("StartingPopulation"),
 		config->get_int_value("StartingFood"));
+	clog << "ok" << endl;
 
-	clog << "Creating data logger..." << endl;
+	clog << "Creating data logger...";
 	data_logger = new logger(*stats, config->get_string_value("DatalogFilename"),
 		config->get_int_value("LoggerUpdateInterval"));
+	clog << "ok" << endl;
 
 	return true;
 }
@@ -208,7 +216,7 @@ bool application::init_logging()
 // This function loads image files:
 bool application::init_graphics()
 {
-	clog << "Loading graphics..." << endl;
+	clog << "Loading graphics... ";
 	try {
 		bacteria_image = new image(BACTERIA_FILENAME, BACTERIA_ALPHA);
 		food_image = new image(FOOD_FILENAME, FOOD_ALPHA);
@@ -218,9 +226,11 @@ bool application::init_graphics()
 		green_bar_segment = new image(GREEN_BAR_SEGMENT);
 	} catch(const exception & error)
 	{
+		clog << "failed!" << endl;
 		cerr << "Error: " << error.what() << endl;
 		return false;
 	}
+	clog << "ok" << endl;
 
 	return true;
 }
@@ -233,11 +243,11 @@ bool application::init_populations()
 	for(int c = 0; c < config->get_int_value("StartingPopulation"); c++)
 	{
 		bacteria bact;
-		bact.set_ancestor(c);
+		bact.set_ancestor(c + 1);
 		bacteria_list.push_back(bact);
 	}
 
-	ancestor_counter = config->get_int_value("StartingPopulation");
+	ancestor_counter = config->get_int_value("StartingPopulation") + 1;
 
 	// Create food:
 	clog << "Creating initial food nuggets..." << endl;
@@ -364,8 +374,11 @@ void application::handle_update()
 				stats->add_bacteria(spawn_list.back().get_generation());
 			}
 
+			// Update the position of the bacteria:
+			temp.update();
+
 			// Remove dead bacteria:
-			if(!temp.update())
+			if(!temp.is_alive())
 			{
 				stats->remove_bacteria();
 				bacteria_iterator = bacteria_list.erase(bacteria_iterator);
@@ -478,7 +491,7 @@ application::~application()
 
 	// Remove bacteria:
 	if(!bacteria_list.empty())
-			bacteria_list.clear();
+		bacteria_list.clear();
 
 	// Remove food nuggets:
 	if(!food_list.empty())
@@ -497,7 +510,7 @@ application::~application()
 }
 
 // Callback for the screen refresh timer (post an SDL_USEREVENT):
-Uint32 timer_callback(Uint32 interval, void * unused)
+Uint32 timer_callback(Uint32 interval, void * unused __attribute((unused)))
 {
 	SDL_Event update_event;
 	SDL_UserEvent update_struct = UPDATE_EVENT;
