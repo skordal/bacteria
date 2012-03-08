@@ -31,7 +31,7 @@ void logger::update()
 	int current_food = stats.get_food();
 
 	if(logfile.good())
-		logfile << setprecision(3) << current_time << "\t"
+		logfile << current_time << "\t"
 			<< current_bacteria << "\t" << current_food << endl;
 }
 
