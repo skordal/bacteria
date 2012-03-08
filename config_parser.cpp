@@ -100,9 +100,9 @@ bool config_parser::parse()
 			case TYPE_BOOLEAN:
 				transform(attribute_value.begin(), attribute_value.end(),
 					attribute_value.begin(), ptr_fun<int, int>(tolower));
-				if(input_line == "true")
+				if(attribute_value == "true")
 					config_db::get().set_value(attribute_name, true);
-				else if(input_line == "false")
+				else if(attribute_value == "false")
 					config_db::get().set_value(attribute_name, false);
 				else {
 					cerr << "ERROR: Unrecognized boolean value for attribute " << attribute_name
