@@ -20,7 +20,7 @@ food::food(int x, int y)
 	anchor_3 = 0;
 	anchor_4 = 0;
 
-	energy = FOOD_ENERGY;
+	energy = config->get_int_value("FoodEnergy");
 }
 
 // This function draws the food nugget:

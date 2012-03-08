@@ -44,10 +44,10 @@ static struct option cmd_options[] = {
 };
 
 application::application()
-	: config_filename(""), info_mode(info_field::NONE), running(true),
-	  starting_pop(STARTING_POP), starting_food(STARTING_FOOD),
-	  logging_interval(LOGGER_UPDATE_INTERVAL), display_stats(true)
+	: config_filename(""), info_mode(info_field::NONE), running(true), display_stats(true)
 {
+	// Create the default configuration database:
+	config = new config_db();
 }
 
 // This function initializes the application by running
@@ -60,13 +60,13 @@ application * application::init(int argc, char * argv[])
 	// Seed the random number generator:
 	srandom(time(0));
 
-	if(!global_app->init_cmd_args(argc, argv))
+	if(!global_app->init_config())
 	{
 		retval = false;
 		goto _skip_init;
 	}
 
-	if(!global_app->init_config())
+	if(!global_app->init_cmd_args(argc, argv))
 	{
 		retval = false;
 		goto _skip_init;
@@ -136,16 +136,16 @@ bool application::init_cmd_args(int argc, char * argv[])
 		switch(option)
 		{
 			case 'b':
-				starting_pop = atoi(optarg);
+				config->set_value("StartingPopulation", atoi(optarg));
 				break;
 			case 'c':
 				config_filename = string(optarg);
 				break;
 			case 'f':
-				starting_food = atoi(optarg);
+				config->set_value("StartingFood", atoi(optarg));
 				break;
 			case 'i':
-				logging_interval = atoi(optarg);
+				config->set_value("LoggerUpdateInterval", atoi(optarg));
 				break;
 			case 'h':
 				display_help();
@@ -164,21 +164,7 @@ bool application::init_config()
 {
 	config_parser * config_file = 0;
 
-	// Create the default configuration database:
-	config = new config_db();
-
-	// Check if command line arguments override the default settings.
-	if(starting_pop != config->get_int_value("StartingPopulation"))
-		config->set_value("StartingPopulation", starting_pop);
-	
-	if(starting_food != config->get_int_value("StartingFood"))
-		config->set_value("StartingFood", starting_food);
-	
-	if(logging_interval != config->get_int_value("LoggerUpdateInterval"))
-		config->set_value("LoggerUpdateInterval", logging_interval);
-
 	// If the config filename is not empty, parse the config file.
-	// The configuration file overrides command line arguments at the moment.
 	if(!config_filename.empty())
 	{
 		clog << "Using configuration file " << config_filename << "... ";
@@ -371,7 +357,7 @@ void application::handle_update()
 				temp.reproduce();
 				spawn_list.push_back(bacteria(temp.get_vector().get_angle() + M_PI,
 					temp.get_vector().get_magnitude(), temp.get_vector().get_x(),
-					temp.get_vector().get_y(), REPRODUCTION_ENERGY / 2,
+					temp.get_vector().get_y(), config->get_int_value("ReproductionEnergy") / 2,
 					temp.get_generation() + 1, temp.get_ancestor()));
 				stats->add_bacteria(spawn_list.back().get_generation());
 			}

@@ -19,8 +19,8 @@
 class logger
 {
 	public:
-		logger(statistics & stats, const std::string & filename = DATALOG_FILENAME,
-			int update_interval = LOGGER_UPDATE_INTERVAL);
+		logger(statistics & stats, const std::string & filename,
+			int update_interval);
 		~logger();
 
 		void update();

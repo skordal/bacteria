@@ -20,7 +20,7 @@
 class statistics
 {
 	public:
-		statistics(int bacteria = STARTING_POP, int food = STARTING_FOOD);
+		statistics(int bacteria, int food);
 
 		void update();
 		void draw() const;
