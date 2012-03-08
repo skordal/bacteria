@@ -10,12 +10,10 @@ extern image * red_bar_segment;
 extern image * yellow_bar_segment;
 extern image * green_bar_segment;
 
-extern config_db * config;
-
 // Initializes the energy bar:
 energy_bar::energy_bar(int energy) : current_energy(energy)
 {
-	max_energy = config->get_int_value("ReproductionEnergy");
+	max_energy = config_db::get().get_int_value("ReproductionEnergy");
 }
 
 // Draws the energy bar at the specified coordinates:

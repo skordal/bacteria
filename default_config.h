@@ -22,20 +22,20 @@ typedef struct {
 } default_config_value_t;
 
 static default_config_value_t default_config[] =  {
-	CFG_INT("StartingPopulation", STARTING_POP),
-	CFG_INT("StartingFood", STARTING_FOOD),
-	CFG_INT("FramesPerSecond", DEFAULT_FPS),
-	CFG_INT("GrowthRateSamplingInterval", AVG_GROWTH_RATE_INT),
-	CFG_FLOAT("FoodSmellingDistance", FOOD_SMELLING_DISTANCE),
-	CFG_INT("FoodEnergy", FOOD_ENERGY),
-	CFG_INT("ReproductionEnergy", REPRODUCTION_ENERGY),
-	CFG_INT("FeedingEnergy", FEEDING_ENERGY),
-	CFG_INT("FoodSpawningRate", SPAWNING_RATE),
-	CFG_STRING("DatalogFilename", DATALOG_FILENAME),
-	CFG_INT("LoggerUpdateInterval", LOGGER_UPDATE_INTERVAL),
-	CFG_INT("ScreenWidth", SCREEN_WIDTH),
-	CFG_INT("ScreenHeight", SCREEN_HEIGHT),
+	CFG_STRING("DatalogFilename", "graph_data.dat"),
+	CFG_INT("FeedingEnergy", 6),
+	CFG_INT("FramesPerSecond", 25),
+	CFG_INT("FoodEnergy", 800),
+	CFG_FLOAT("FoodSmellingDistance", 50.0f),
+	CFG_INT("FoodSpawningRate", 50),
 	CFG_BOOL("Fullscreen", false),
+	CFG_INT("GrowthRateSamplingInterval", 1),
+	CFG_INT("LoggerUpdateInterval", 100),
+	CFG_INT("ReproductionEnergy", 500),
+	CFG_INT("ScreenWidth", 800),
+	CFG_INT("ScreenHeight", 600),
+	CFG_INT("StartingPopulation", 10),
+	CFG_INT("StartingFood", 10),
 	CFG_NULL
 };
 

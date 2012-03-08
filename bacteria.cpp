@@ -14,19 +14,19 @@ bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_ener
 	: alive(true), generation(gen), heading_for_food(false), at_food(false), ancestor(ancestor)
 {
 	if(init_energy == 0)
-		energy = STARTING_ENERGY;
+		energy = config_db::get().get_int_value("FramesPerSecond") * (12 + PM(6)); // Magic value :-)
 	else
 		energy = init_energy;
 
-	speed = vector(angle == 0.0f ? (random() % 360) * (M_PI/180) : angle,
-		init_speed == 0.0f ? drand48() * (random() % 2) + 1 : init_speed,
-		ix == 0 ? random() % (config->get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
-		iy == 0 ? random() % (config->get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
+	speed = vector(angle == 0.0f ? (rand() % 360) * (M_PI/180) : angle,
+		init_speed == 0.0f ? ((float) rand() / (float) RAND_MAX) * (rand() % 2) + 1 : init_speed,
+		ix == 0 ? rand() % (config_db::get().get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
+		iy == 0 ? rand() % (config_db::get().get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
 }
 
 void bacteria::reproduce()
 {
-	energy = config->get_int_value("ReproductionEnergy") / 2;
+	energy = config_db::get().get_int_value("ReproductionEnergy") / 2;
 }
 
 void bacteria::draw() const
@@ -71,13 +71,13 @@ bool bacteria::update()
 	}
 
 	// Check for collision with the screen edges:
-	if(speed.get_x() >= (config->get_int_value("ScreenWidth") - bacteria_image->get_width())
+	if(speed.get_x() >= (config_db::get().get_int_value("ScreenWidth") - bacteria_image->get_width())
 		|| speed.get_x() <= 0.0f)
 	{
 		speed.set_angle(M_PI - speed.get_angle());
 	}
 
-	if(speed.get_y() >= (config->get_int_value("ScreenHeight") - bacteria_image->get_height())
+	if(speed.get_y() >= (config_db::get().get_int_value("ScreenHeight") - bacteria_image->get_height())
 		|| speed.get_y() <= 0.0f)
 	{
 		speed.set_angle(speed.get_angle() - 2 * speed.get_angle());
@@ -88,8 +88,8 @@ bool bacteria::update()
 
 int bacteria::feed()
 {
-	energy += config->get_int_value("FeedingEnergy");
-	return config->get_int_value("FeedingEnergy");
+	energy += config_db::get().get_int_value("FeedingEnergy");
+	return config_db::get().get_int_value("FeedingEnergy");
 }
 
 void bacteria::release(bool new_dir)
@@ -99,15 +99,16 @@ void bacteria::release(bool new_dir)
 
 	if(new_dir)
 	{
-		speed.set_angle((double) (random() % 360) * (M_PI / 180.0f));
-		speed.set_magnitude(drand48() * (random() % 2) + 1);
+		speed.set_angle((double) (rand() % 360) * (M_PI / 180.0f));
+		speed.set_magnitude(((float) rand() / (float) RAND_MAX) * (rand() % 2) + 1);
 	}
 }
 
 void bacteria::set_destination(coordinate_pair_t destination)
 {
-	double new_angle;
+	double new_angle, init_food_dist;
 	float delta_x, delta_y;
+
 	coordinate_pair_t bacteria_center = {speed.get_x() + bacteria_image->get_width() / 2,
 		speed.get_y() + bacteria_image->get_height() / 2};
 
@@ -121,6 +122,6 @@ void bacteria::set_destination(coordinate_pair_t destination)
 	prev_food_dist = init_food_dist;
 
 	speed.set_angle(new_angle);
-	speed.set_magnitude(drand48() * (random() % 2) + 1);
+	speed.set_magnitude(((float) rand() / (float) RAND_MAX) * (rand() % 2) + 1);
 }
 

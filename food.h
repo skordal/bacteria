@@ -23,7 +23,6 @@ class food
 {
 	public:
 		food(int x = 0, int y = 0);
-		~food();
 
 		bool update();
 		void draw() const;

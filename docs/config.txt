@@ -16,54 +16,46 @@ is a list of key names, default values and datatypes:
 
 See how to add new configuration keys at the bottom of this file.
 
-StartingPopulation: Initial number of bacteria
-	Data type: Integer
-	Default value: 10
-
-StartingFood: Initial number of food nuggets
-	Data type: Integer
-	Default value: 10
-
-FramesPerSecond: Number of frames per second
-	Data type: Integer
-	Default value: 25
-
-FoodSmellingDistance: The distance from a food nugget at which a bacteria sees it
-	Data type: Floating point number
-	Default value: 50.000
-
-FoodEnergy: The amount of energy quantas contained in each food nugget
-	Data type: Integer
-	Default value: 800
-
-ReproductionEnergy: The energy at which a cell divides
-	Data type: Integer
-	Default value: 500
+DatalogFilename: The file to which population data is logged
+	Data type: String
+	Default value: graph_data.dat
 
 FeedingEnergy: The energy a bacteria gains each frame when feeding
 	Data type: Integer
 	Default value: 6
 
+FramesPerSecond: Number of frames per second
+	Data type: Integer
+	Default value: 25
+
+FoodEnergy: The amount of energy quantas contained in each food nugget
+	Data type: Integer
+	Default value: 800
+
+FoodSmellingDistance: The distance from a food nugget at which a bacteria sees it
+	Data type: Floating point number
+	Default value: 50.000
+
 FoodSpawningRate: The rate at which new food is spawning (once every x frames)
 	Data type: Integer
 	Default value: 50
 
-DatalogFilename: The file to which population data is logged
-	Data type: String
-	Default value: graph_data.dat
-
-LoggerUpdateInterval: Milliseconds between each log entry
-	Data type: Integer
-	Default value: 100
+Fullscreen: Whether to run fullscreen or not.
+	Data type: Boolean
+	Default value: false
 
 GrowthRateSamplingInterval: How often to sample the population for calculating the
 	                    average growth rate (samples/second).
 	Data type: Integer
 	Default value: 1
 
-SHMFilename: Which file to open for SHM export of statistics.
-	Data type: String
-	Default value: /bacteria_stats
+LoggerUpdateInterval: Milliseconds between each log entry
+	Data type: Integer
+	Default value: 100
+
+ReproductionEnergy: The energy at which a cell divides
+	Data type: Integer
+	Default value: 500
 
 ScreenWidth: The width of the simulator window.
 	Data type: Integer
@@ -73,25 +65,23 @@ ScreenHeight: The height of the simulator window.
 	Data type: Integer
 	Default value: 600
 
-Fullscreen: Whether to run fullscreen or not.
-	Data type: Boolean
-	Default value: false
+StartingPopulation: Initial number of bacteria
+	Data type: Integer
+	Default value: 10
+
+StartingFood: Initial number of food nuggets
+	Data type: Integer
+	Default value: 10
 
 Steps to add a new configuration key:
-	1. Find a default value and define it in config.h
-	2. Add an entry to the table of default config values in default_config.h.
+	1. Add an entry to the table of default config values in default_config.h.
 	   The following macros are used for this purpose:
 	   	CFG_INT(name, value)
 		CFG_BOOL(name, value)
 		CFG_STRING(name, value)
 		CFG_FLOAT(name, value)
 	   These macros are defined in macros.h
-	3. Add an entry to the table of value data types in default_config.h. The
-	   following macro are used for this purpose:
-	   	CFG_TYPE(name, type)
-	   where name is the name of the key, and type is one of the following:
-	   	INTEGER, FLOAT, BOOLEAN, STRING
-	4. Add an entry to this file, in the format of the entries above.
-	5. Optionally add an entry to the default config file, so as to have a complete
+	2. Add an entry to this file, in the format of the entries above.
+	3. Optionally add an entry to the default config file, so as to have a complete
 	   configuration file that users may derive their own from.
 

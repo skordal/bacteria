@@ -19,11 +19,10 @@
 class config_parser
 {
 	public:
-		config_parser(config_db * config, const std::string & filename);
+		config_parser(const std::string & filename);
 
 		bool parse();
 	private:
-		config_db * config;
 		std::string filename;
 };
 
