@@ -18,10 +18,10 @@ bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_ener
 	else
 		energy = init_energy;
 
-	speed = vector(angle == 0.0f ? (random() % 360) * (M_PI/180) : angle,
-		init_speed == 0.0f ? drand48() * (random() % 2) + 1 : init_speed,
-		ix == 0 ? random() % (config_db::get().get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
-		iy == 0 ? random() % (config_db::get().get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
+	speed = vector(angle == 0.0f ? (rand() % 360) * (M_PI/180) : angle,
+		init_speed == 0.0f ? ((float) rand() / (float) RAND_MAX) * (rand() % 2) + 1 : init_speed,
+		ix == 0 ? rand() % (config_db::get().get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
+		iy == 0 ? rand() % (config_db::get().get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
 }
 
 void bacteria::reproduce()
@@ -99,8 +99,8 @@ void bacteria::release(bool new_dir)
 
 	if(new_dir)
 	{
-		speed.set_angle((double) (random() % 360) * (M_PI / 180.0f));
-		speed.set_magnitude(drand48() * (random() % 2) + 1);
+		speed.set_angle((double) (rand() % 360) * (M_PI / 180.0f));
+		speed.set_magnitude(((float) rand() / (float) RAND_MAX) * (rand() % 2) + 1);
 	}
 }
 
@@ -122,6 +122,6 @@ void bacteria::set_destination(coordinate_pair_t destination)
 	prev_food_dist = init_food_dist;
 
 	speed.set_angle(new_angle);
-	speed.set_magnitude(drand48() * (random() % 2) + 1);
+	speed.set_magnitude(((float) rand() / (float) RAND_MAX) * (rand() % 2) + 1);
 }
 

@@ -9,7 +9,7 @@
 #include "config_db.h"
 
 // Plus-minus function:
-#define PM(x) ((random() % x) * (random() % 2 ? 1 : -1))
+#define PM(x) ((rand() % x) * (rand() % 2 ? 1 : -1))
 
 // Check if an object has reached its destination, ± 2 pixels:
 #define AT_DESTINATION(cur_pos, dest_pos) \

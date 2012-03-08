@@ -54,8 +54,7 @@ application * application::init(int argc, char * argv[])
 	bool retval = true;
 	global_app = new application();
 
-	// Seed the random number generator:
-	srandom(time(0));
+	srand(time(0));
 
 	if(!global_app->init_config())
 	{
@@ -236,8 +235,8 @@ bool application::init_populations()
 	clog << "Creating initial food nuggets..." << endl;
 	for(int c = 0; c < config_db::get().get_int_value("StartingFood"); c++)
 	{
-		food_list.push_back(food(random() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
-			random() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
+		food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
+			rand() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
 	}
 
 	return true;
@@ -311,8 +310,8 @@ void application::handle_update()
 	if(counter >= config_db::get().get_int_value("FoodSpawningRate") && !stats->get_game_over())
 	{
 		counter = 0;
-		food_list.push_back(food(random() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
-			random() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
+		food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
+			rand() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
 		stats->add_food();
 	}
 
@@ -423,8 +422,8 @@ void application::handle_key(SDLKey key)
 				info_mode = info_field::NONE;
 			break;
 		case SDLK_f: // F - Add food nugget
-			food_list.push_back(food(random() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
-				random() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
+			food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
+				rand() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
 			stats->add_food();
 			break;
 		case SDLK_g: // G - Toggle generation display
