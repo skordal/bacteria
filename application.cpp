@@ -56,13 +56,13 @@ application * application::init(int argc, char * argv[])
 
 	srand(time(0));
 
-	if(!global_app->init_config())
+	if(!global_app->init_cmd_args(argc, argv))
 	{
 		retval = false;
 		goto _skip_init;
 	}
 
-	if(!global_app->init_cmd_args(argc, argv))
+	if(!global_app->init_config())
 	{
 		retval = false;
 		goto _skip_init;
