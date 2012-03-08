@@ -163,7 +163,7 @@ bool application::init_config()
 	// If the config filename is not empty, parse the config file.
 	if(!config_filename.empty())
 	{
-		clog << "Using configuration file " << config_filename << "... ";
+		clog << "Parsing configuration file " << config_filename << "... ";
 		config_file = new config_parser(config_filename);
 		if(!config_file->parse())
 		{
