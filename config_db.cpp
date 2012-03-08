@@ -10,6 +10,9 @@
 
 using namespace std;
 
+// The global configuration object:
+config_db config_db::global_config;
+
 config_db::config_db()
 {
 	for(int c = 0; default_config[c].name != NULL; c++)

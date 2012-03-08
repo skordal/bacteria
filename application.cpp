@@ -10,7 +10,6 @@ using namespace std;
 // Global image variables:
 image * bacteria_image, * food_image;
 image * red_bar_segment, * yellow_bar_segment, * green_bar_segment;
-config_db * config;
 
 // Lists of organisms:
 list<bacteria> bacteria_list;
@@ -46,8 +45,6 @@ static struct option cmd_options[] = {
 application::application()
 	: config_filename(""), info_mode(info_field::NONE), running(true), display_stats(true)
 {
-	// Create the default configuration database:
-	config = new config_db();
 }
 
 // This function initializes the application by running
@@ -72,8 +69,8 @@ application * application::init(int argc, char * argv[])
 		goto _skip_init;
 	}
 
-	global_app->main_window = window::create(config->get_int_value("ScreenWidth"),
-		config->get_int_value("ScreenHeight"));
+	global_app->main_window = window::create(config_db::get().get_int_value("ScreenWidth"),
+		config_db::get().get_int_value("ScreenHeight"));
 	if(global_app->main_window == 0)
 	{
 		retval = false;
@@ -136,16 +133,16 @@ bool application::init_cmd_args(int argc, char * argv[])
 		switch(option)
 		{
 			case 'b':
-				config->set_value("StartingPopulation", atoi(optarg));
+				config_db::get().set_value("StartingPopulation", atoi(optarg));
 				break;
 			case 'c':
 				config_filename = string(optarg);
 				break;
 			case 'f':
-				config->set_value("StartingFood", atoi(optarg));
+				config_db::get().set_value("StartingFood", atoi(optarg));
 				break;
 			case 'i':
-				config->set_value("LoggerUpdateInterval", atoi(optarg));
+				config_db::get().set_value("LoggerUpdateInterval", atoi(optarg));
 				break;
 			case 'h':
 				display_help();
@@ -168,7 +165,7 @@ bool application::init_config()
 	if(!config_filename.empty())
 	{
 		clog << "Using configuration file " << config_filename << "... ";
-		config_file = new config_parser(config, config_filename);
+		config_file = new config_parser(config_filename);
 		if(!config_file->parse())
 		{
 			clog << "failed!" << endl;
@@ -187,13 +184,13 @@ bool application::init_config()
 bool application::init_logging()
 {
 	clog << "Initializing statistics... ";
-	stats = new statistics(config->get_int_value("StartingPopulation"),
-		config->get_int_value("StartingFood"));
+	stats = new statistics(config_db::get().get_int_value("StartingPopulation"),
+		config_db::get().get_int_value("StartingFood"));
 	clog << "ok" << endl;
 
 	clog << "Creating data logger...";
-	data_logger = new logger(*stats, config->get_string_value("DatalogFilename"),
-		config->get_int_value("LoggerUpdateInterval"));
+	data_logger = new logger(*stats, config_db::get().get_string_value("DatalogFilename"),
+		config_db::get().get_int_value("LoggerUpdateInterval"));
 	clog << "ok" << endl;
 
 	return true;
@@ -226,21 +223,21 @@ bool application::init_populations()
 {
 	// Create bacteria:
 	clog << "Creating initial bacteria population..." << endl;
-	for(int c = 0; c < config->get_int_value("StartingPopulation"); c++)
+	for(int c = 0; c < config_db::get().get_int_value("StartingPopulation"); c++)
 	{
 		bacteria bact;
 		bact.set_ancestor(c + 1);
 		bacteria_list.push_back(bact);
 	}
 
-	ancestor_counter = config->get_int_value("StartingPopulation") + 1;
+	ancestor_counter = config_db::get().get_int_value("StartingPopulation") + 1;
 
 	// Create food:
 	clog << "Creating initial food nuggets..." << endl;
-	for(int c = 0; c < config->get_int_value("StartingFood"); c++)
+	for(int c = 0; c < config_db::get().get_int_value("StartingFood"); c++)
 	{
-		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
-			random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
+		food_list.push_back(food(random() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
+			random() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
 	}
 
 	return true;
@@ -250,8 +247,8 @@ bool application::init_populations()
 bool application::init_timers()
 {
 	clog << "Starting timers..." << endl;
-	refresh_timer = SDL_AddTimer(1000 / config->get_int_value("FramesPerSecond"), timer_callback, 0);
-	logger_timer = SDL_AddTimer(config->get_int_value("LoggerUpdateInterval"),
+	refresh_timer = SDL_AddTimer(1000 / config_db::get().get_int_value("FramesPerSecond"), timer_callback, 0);
+	logger_timer = SDL_AddTimer(config_db::get().get_int_value("LoggerUpdateInterval"),
 		logger_timer_cb, (void *) data_logger);
 	
 	return true;
@@ -311,11 +308,11 @@ void application::handle_update()
 	main_window->clear();
 
 	// Check if it's time for a new food nugget to spawn:
-	if(counter >= config->get_int_value("FoodSpawningRate") && !stats->get_game_over())
+	if(counter >= config_db::get().get_int_value("FoodSpawningRate") && !stats->get_game_over())
 	{
 		counter = 0;
-		food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
-			random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
+		food_list.push_back(food(random() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
+			random() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
 		stats->add_food();
 	}
 
@@ -357,7 +354,7 @@ void application::handle_update()
 				temp.reproduce();
 				spawn_list.push_back(bacteria(temp.get_vector().get_angle() + M_PI,
 					temp.get_vector().get_magnitude(), temp.get_vector().get_x(),
-					temp.get_vector().get_y(), config->get_int_value("ReproductionEnergy") / 2,
+					temp.get_vector().get_y(), config_db::get().get_int_value("ReproductionEnergy") / 2,
 					temp.get_generation() + 1, temp.get_ancestor()));
 				stats->add_bacteria(spawn_list.back().get_generation());
 			}
@@ -426,8 +423,8 @@ void application::handle_key(SDLKey key)
 				info_mode = info_field::NONE;
 			break;
 		case SDLK_f: // F - Add food nugget
-			food_list.push_back(food(random() % (config->get_int_value("ScreenWidth") - food_image->get_width()),
-				random() % (config->get_int_value("ScreenHeight") - food_image->get_height())));
+			food_list.push_back(food(random() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
+				random() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
 			stats->add_food();
 			break;
 		case SDLK_g: // G - Toggle generation display

@@ -40,7 +40,7 @@ class bacteria
 		void release(bool newdir = true);
 		void stop() { at_food = true; }
 
-		bool can_reproduce() const { return energy >= config->get_int_value("ReproductionEnergy"); }
+		bool can_reproduce() const { return energy >= config_db::get().get_int_value("ReproductionEnergy"); }
 		void reproduce();
 
 		// Returns the speed vector for the bacteria:

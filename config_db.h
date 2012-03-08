@@ -16,9 +16,6 @@
 
 #include "config.h"
 
-class config_db;
-extern config_db * config;
-
 typedef enum {
 	TYPE_INTEGER, TYPE_BOOLEAN, TYPE_FLOAT, TYPE_STRING, TYPE_INVALID
 } config_type_t;
@@ -36,8 +33,8 @@ typedef struct {
 class config_db
 {
 	public:
-		config_db();
-		~config_db();
+		// Gets the global configuration object:
+		static config_db & get() { return global_config; }
 
 		// Returns false if wrong type:
 		bool set_value(const std::string & name, int value);
@@ -52,7 +49,11 @@ class config_db
 
 		static config_type_t get_type(const std::string & name);
 	private:
+		config_db();
+		~config_db();
+
 		std::map<std::string, config_value_t> values;
+		static config_db global_config;
 };
 
 #endif

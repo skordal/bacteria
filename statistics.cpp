@@ -8,8 +8,6 @@
 
 using namespace std;
 
-extern config_db * config;
-
 statistics::statistics(int bacteria, int food)
 	: bacteria(bacteria), food(food), game_over(false), paused(false),
 	peak_pop(bacteria), peak_food(food), total_spawn(bacteria),
@@ -63,7 +61,7 @@ void statistics::draw() const
 	if(game_over)
 		message_buffer << " | SIMULATION ENDED.";
 
-	window::get()->draw(message_buffer.str(), 0, config->get_int_value("ScreenHeight") -
+	window::get()->draw(message_buffer.str(), 0, config_db::get().get_int_value("ScreenHeight") -
 			window::get()->get_font_height());
 }
 
@@ -74,7 +72,7 @@ void statistics::calc_avg_growth()
 	time_t dt = difftime(time(0), prev_time);
 	int dP = bacteria - last_pop;
 
-	if(dt < config->get_int_value("GrowthRateSamplingInterval"))
+	if(dt < config_db::get().get_int_value("GrowthRateSamplingInterval"))
 		return;
 
 	avg_growth = (avg_growth + ((float) dP / (float) dt)) / 2.0f;

@@ -14,19 +14,19 @@ bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_ener
 	: alive(true), generation(gen), heading_for_food(false), at_food(false), ancestor(ancestor)
 {
 	if(init_energy == 0)
-		energy = STARTING_ENERGY;
+		energy = config_db::get().get_int_value("FramesPerSecond") * (12 + PM(6)); // Magic value :-)
 	else
 		energy = init_energy;
 
 	speed = vector(angle == 0.0f ? (random() % 360) * (M_PI/180) : angle,
 		init_speed == 0.0f ? drand48() * (random() % 2) + 1 : init_speed,
-		ix == 0 ? random() % (config->get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
-		iy == 0 ? random() % (config->get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
+		ix == 0 ? random() % (config_db::get().get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
+		iy == 0 ? random() % (config_db::get().get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
 }
 
 void bacteria::reproduce()
 {
-	energy = config->get_int_value("ReproductionEnergy") / 2;
+	energy = config_db::get().get_int_value("ReproductionEnergy") / 2;
 }
 
 void bacteria::draw() const
@@ -71,13 +71,13 @@ bool bacteria::update()
 	}
 
 	// Check for collision with the screen edges:
-	if(speed.get_x() >= (config->get_int_value("ScreenWidth") - bacteria_image->get_width())
+	if(speed.get_x() >= (config_db::get().get_int_value("ScreenWidth") - bacteria_image->get_width())
 		|| speed.get_x() <= 0.0f)
 	{
 		speed.set_angle(M_PI - speed.get_angle());
 	}
 
-	if(speed.get_y() >= (config->get_int_value("ScreenHeight") - bacteria_image->get_height())
+	if(speed.get_y() >= (config_db::get().get_int_value("ScreenHeight") - bacteria_image->get_height())
 		|| speed.get_y() <= 0.0f)
 	{
 		speed.set_angle(speed.get_angle() - 2 * speed.get_angle());
@@ -88,8 +88,8 @@ bool bacteria::update()
 
 int bacteria::feed()
 {
-	energy += config->get_int_value("FeedingEnergy");
-	return config->get_int_value("FeedingEnergy");
+	energy += config_db::get().get_int_value("FeedingEnergy");
+	return config_db::get().get_int_value("FeedingEnergy");
 }
 
 void bacteria::release(bool new_dir)

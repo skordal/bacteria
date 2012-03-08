@@ -7,11 +7,10 @@
 
 using namespace std;
 
-config_parser::config_parser(config_db * config, const string & filename)
-	: config(config), filename(filename)
+config_parser::config_parser(const string & filename)
+	: filename(filename)
 {
 	assert(!filename.empty());
-	assert(config != NULL);
 }
 
 bool config_parser::parse()
@@ -58,7 +57,6 @@ bool config_parser::parse()
 		size_t name_end = input_line.find_first_of(" =\t", name_start);
 		if(name_end == string::npos)
 		{
-			// TODO: Find out if this can actually happen, despite the checks above.
 			cerr << "ERROR: End of attribute name not found on line " << input_line << endl;
 			return false;
 		}
@@ -92,20 +90,20 @@ bool config_parser::parse()
 			case TYPE_INTEGER:
 				int intval;
 				value_extractor >> intval;
-				config->set_value(attribute_name, intval);
+				config_db::get().set_value(attribute_name, intval);
 				break;
 			case TYPE_FLOAT:
 				float floatval;
 				value_extractor >> floatval;
-				config->set_value(attribute_name, floatval);
+				config_db::get().set_value(attribute_name, floatval);
 				break;
 			case TYPE_BOOLEAN:
 				transform(attribute_value.begin(), attribute_value.end(),
 					attribute_value.begin(), ptr_fun<int, int>(tolower));
 				if(input_line == "true")
-					config->set_value(attribute_name, true);
+					config_db::get().set_value(attribute_name, true);
 				else if(input_line == "false")
-					config->set_value(attribute_name, false);
+					config_db::get().set_value(attribute_name, false);
 				else {
 					cerr << "ERROR: Unrecognized boolean value for attribute " << attribute_name
 						<< " on line " << input_line << endl;
@@ -113,7 +111,7 @@ bool config_parser::parse()
 				}
 				break;
 			case TYPE_STRING:
-				config->set_value(attribute_name, attribute_value.c_str());
+				config_db::get().set_value(attribute_name, attribute_value.c_str());
 				break;
 		}
 	}

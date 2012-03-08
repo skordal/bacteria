@@ -8,8 +8,6 @@
 
 using namespace std;
 
-extern config_db * config;
-
 // The main window object:
 window * window::main_window = 0;
 
@@ -94,10 +92,10 @@ window::window(int width, int height)
 		throw runtime_error(string("Could not load font from ").append(STATUS_FONT));
 	
 	// Create the window surface:
-	clog << "Creating window (" << config->get_int_value("ScreenWidth") << " x "
-		<< config->get_int_value("ScreenHeight") << ")...";
+	clog << "Creating window (" << config_db::get().get_int_value("ScreenWidth") << " x "
+		<< config_db::get().get_int_value("ScreenHeight") << ")...";
 	screen = SDL_SetVideoMode(width, height, 0,
-		config->get_bool_value("Fullscreen")
+		config_db::get().get_bool_value("Fullscreen")
 		? SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN
 		: SDL_HWSURFACE|SDL_DOUBLEBUF);
 	if(screen == 0)

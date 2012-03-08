@@ -7,7 +7,6 @@
 #include "food.h"
 
 extern image * food_image, * bacteria_image;
-extern config_db * config;
 
 // This function initializes the food nugget:
 food::food(int x, int y)
@@ -20,7 +19,7 @@ food::food(int x, int y)
 	anchor_3 = 0;
 	anchor_4 = 0;
 
-	energy = config->get_int_value("FoodEnergy");
+	energy = config_db::get().get_int_value("FoodEnergy");
 }
 
 // This function draws the food nugget:
@@ -165,7 +164,7 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 			temp_center.get_y() + bacteria_image->get_height() / 2);
 
 		// Check if the bacteria is within "smelling distance" of the food:
-		if(distance <= config->get_float_value("FoodSmellingDistance")
+		if(distance <= config_db::get().get_float_value("FoodSmellingDistance")
 			&& !temp.is_heading_for_food())
 		{
 			coordinate_pair_t anchor_temp = this->closest_anchor(temp_center);
@@ -217,10 +216,5 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 			}
 		}
 	}
-}
-
-food::~food()
-{
-
 }
 
