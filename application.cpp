@@ -286,9 +286,14 @@ const char * application::find_file(const char * filename)
 	{
 		string temp = image_search_path[c];
 		temp += filename;
+		ifstream test_stream(temp.c_str());
 
-		if(access(temp.c_str(), F_OK) == 0)
+		if(test_stream.good())
+		{
+			test_stream.close();
 			return temp.c_str();
+		} else
+			test_stream.close();
 	}
 
 	cerr << "ERROR: File not found: " << filename << endl;
