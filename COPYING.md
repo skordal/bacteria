@@ -3,7 +3,7 @@ Bacteria Licensing
 
 This software is distributed under the terms of the MIT license, reproduced below.
 
-Bacteria - Copyright &copy; 2009 - 2012 Kristian Klomsten Skordal <kristian.skordal@gmail.com>
+Bacteria - Copyright &copy; 2009 - 2012 Kristian Klomsten Skordal <<kristian.skordal@gmail.com>>
 
 The MIT License
 ---------------
