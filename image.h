@@ -43,6 +43,7 @@ class image
 		image(const std::string & filename, int alpha = SDL_ALPHA_OPAQUE) throw(std::runtime_error);
 		~image();
 
+		// The SDL surface containing the image:
 		SDL_Surface * img;
 
 		// Global image objects, initialized by image::initialize():

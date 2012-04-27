@@ -42,6 +42,7 @@ void image::cleanup()
 		delete green_bar_segment;
 }
 
+// Loads an image from the specified file with the specified alpha value:
 image::image(const string & filename, int alpha) throw(runtime_error)
 {
 	assert(!filename.empty());
@@ -54,6 +55,7 @@ image::image(const string & filename, int alpha) throw(runtime_error)
 	SDL_SetAlpha(img, SDL_SRCALPHA, alpha);
 }
 
+// Frees the loaded image:
 image::~image()
 {
 	SDL_FreeSurface(img);
