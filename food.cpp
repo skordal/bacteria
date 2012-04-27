@@ -6,8 +6,6 @@
 #include "application.h"
 #include "food.h"
 
-extern image * food_image, * bacteria_image;
-
 // This function initializes the food nugget:
 food::food(int x, int y)
 {
@@ -25,7 +23,7 @@ food::food(int x, int y)
 // This function draws the food nugget:
 void food::draw() const
 {
-	window::get()->draw(*food_image, x, y);
+	window::get()->draw(image::get_food(), x, y);
 }
 
 // This function returns the "anchor point" closes to the specified bacteria.
@@ -148,8 +146,8 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 {
 	std::list<bacteria>::iterator bacteria_iterator;
 
-	vector food_location = vector(0, 0, x + food_image->get_width() / 2,
-		y + food_image->get_height() / 2);
+	vector food_location = vector(0, 0, x + image::get_food().get_width() / 2,
+		y + image::get_food().get_height() / 2);
 
 	// Iterate through the bacteria list:
 	for(bacteria_iterator = bacteria_list.begin(); bacteria_iterator != bacteria_list.end();
@@ -160,8 +158,8 @@ void food::check_for_bacteria(std::list<bacteria> & bacteria_list)
 		coordinate_pair_t bacteria_dest = temp.get_destination();
 		float distance = vector::distance_between(temp_center, food_location);
 
-		temp_center.set_xy(temp_center.get_x() + bacteria_image->get_width() / 2,
-			temp_center.get_y() + bacteria_image->get_height() / 2);
+		temp_center.set_xy(temp_center.get_x() + image::get_bacteria().get_width() / 2,
+			temp_center.get_y() + image::get_bacteria().get_height() / 2);
 
 		// Check if the bacteria is within "smelling distance" of the food:
 		if(distance <= config_db::get().get_float_value("FoodSmellingDistance")

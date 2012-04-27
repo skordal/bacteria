@@ -8,8 +8,6 @@
 
 using namespace std;
 
-extern image * bacteria_image;
-
 bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_energy, int gen, int ancestor)
 	: alive(true), generation(gen), heading_for_food(false), at_food(false), ancestor(ancestor)
 {
@@ -20,8 +18,8 @@ bacteria::bacteria(double angle, float init_speed, int ix, int iy, int init_ener
 
 	speed = vector(angle == 0.0f ? (rand() % 360) * (M_PI/180) : angle,
 		init_speed == 0.0f ? ((float) rand() / (float) RAND_MAX) * (rand() % 2) + 1 : init_speed,
-		ix == 0 ? rand() % (config_db::get().get_int_value("ScreenWidth") - bacteria_image->get_width()) : ix,
-		iy == 0 ? rand() % (config_db::get().get_int_value("ScreenHeight") - bacteria_image->get_height()) : iy);
+		ix == 0 ? rand() % (config_db::get().get_int_value("ScreenWidth") - image::get_bacteria().get_width()) : ix,
+		iy == 0 ? rand() % (config_db::get().get_int_value("ScreenHeight") - image::get_bacteria().get_height()) : iy);
 }
 
 void bacteria::reproduce()
@@ -31,14 +29,14 @@ void bacteria::reproduce()
 
 void bacteria::draw() const
 {
-	window::get()->draw(*bacteria_image, speed.get_x(), speed.get_y());
+	window::get()->draw(image::get_bacteria(), speed.get_x(), speed.get_y());
 }
 
 // Update the bacteria, return false if dead:
 bool bacteria::update()
 {
-	coordinate_pair_t bacteria_center = {speed.get_x() + bacteria_image->get_width() / 2,
-		speed.get_y() + bacteria_image->get_height() / 2};
+	coordinate_pair_t bacteria_center = {speed.get_x() + image::get_bacteria().get_width() / 2,
+		speed.get_y() + image::get_bacteria().get_height() / 2};
 	float temp_food_dist;
 
 	// Reduce the bacteria's energy supply:
@@ -71,13 +69,13 @@ bool bacteria::update()
 	}
 
 	// Check for collision with the screen edges:
-	if(speed.get_x() >= (config_db::get().get_int_value("ScreenWidth") - bacteria_image->get_width())
+	if(speed.get_x() >= (config_db::get().get_int_value("ScreenWidth") - image::get_bacteria().get_width())
 		|| speed.get_x() <= 0.0f)
 	{
 		speed.set_angle(M_PI - speed.get_angle());
 	}
 
-	if(speed.get_y() >= (config_db::get().get_int_value("ScreenHeight") - bacteria_image->get_height())
+	if(speed.get_y() >= (config_db::get().get_int_value("ScreenHeight") - image::get_bacteria().get_height())
 		|| speed.get_y() <= 0.0f)
 	{
 		speed.set_angle(speed.get_angle() - 2 * speed.get_angle());
@@ -109,8 +107,8 @@ void bacteria::set_destination(coordinate_pair_t destination)
 	double new_angle, init_food_dist;
 	float delta_x, delta_y;
 
-	coordinate_pair_t bacteria_center = {speed.get_x() + bacteria_image->get_width() / 2,
-		speed.get_y() + bacteria_image->get_height() / 2};
+	coordinate_pair_t bacteria_center = {speed.get_x() + image::get_bacteria().get_width() / 2,
+		speed.get_y() + image::get_bacteria().get_height() / 2};
 
 	food_loc = destination;
 	heading_for_food = true;

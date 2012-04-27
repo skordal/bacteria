@@ -8,8 +8,6 @@
 
 using namespace std;
 
-extern image * bacteria_image;
-
 info_field::info_field(const bacteria & owner) : owner(owner)
 {
 
@@ -31,13 +29,13 @@ void info_field::draw() const
 			text << owner.generation;
 			break;
 		case ENERGY_BAR:
-			ebar.draw(owner.speed.get_x() + bacteria_image->get_width(),
-				owner.speed.get_y() + (bacteria_image->get_height() - ENERGY_BAR_HEIGHT) / 2);
+			ebar.draw(owner.speed.get_x() + image::get_bacteria().get_width(),
+				owner.speed.get_y() + (image::get_bacteria().get_height() - ENERGY_BAR_HEIGHT) / 2);
 			return;
 		case POSITION:
 			text << '(' << (int) owner.speed.get_x() << ", " << (int) owner.speed.get_y() << ')';
 			break;
 	}
-	window::get()->draw(text.str(), owner.speed.get_x() + bacteria_image->get_width(), owner.speed.get_y());
+	window::get()->draw(text.str(), owner.speed.get_x() + image::get_bacteria().get_width(), owner.speed.get_y());
 }
 

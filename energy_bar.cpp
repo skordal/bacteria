@@ -3,12 +3,7 @@
 /*      (c) Kristian K. Skordal 2009 - 2012      */
 /*************************************************/
 
-#include "application.h"
 #include "energy_bar.h"
-
-extern image * red_bar_segment;
-extern image * yellow_bar_segment;
-extern image * green_bar_segment;
 
 // Initializes the energy bar:
 energy_bar::energy_bar(int energy) : current_energy(energy)
@@ -26,21 +21,21 @@ void energy_bar::draw(int x, int y) const
 
 	// Draw the red bart of the image:
 	for(int i = 0; i < red_length && i < current_length; ++i, ++x)
-		window::get()->draw(*red_bar_segment, x, y);
+		window::get()->draw(image::get_red_bar_segment(), x, y);
 
 	if(current_length < red_length)
 		return;
 
 	// Draw the yellow part of the image:
 	for(int i = 0; i < yellow_length && (i + red_length < current_length); ++i, ++x)
-		window::get()->draw(*yellow_bar_segment, x, y);
+		window::get()->draw(image::get_yellow_bar_segment(), x, y);
 
 	if(current_length < red_length + yellow_length)
 		return;
 
 	// Draw the green part of the image:
 	for(int i = 0; i < green_length && (i + red_length + yellow_length < current_length); ++i, ++x)
-		window::get()->draw(*green_bar_segment, x ,y);
+		window::get()->draw(image::get_green_bar_segment(), x ,y);
 }
 
 energy_bar & energy_bar::operator+=(int energy)

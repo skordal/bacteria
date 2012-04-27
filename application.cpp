@@ -7,10 +7,6 @@
 
 using namespace std;
 
-// Global image variables:
-image * bacteria_image, * food_image;
-image * red_bar_segment, * yellow_bar_segment, * green_bar_segment;
-
 // Lists of organisms:
 list<bacteria> bacteria_list;
 list<food> food_list;
@@ -200,12 +196,7 @@ bool application::init_graphics()
 {
 	clog << "Loading graphics... ";
 	try {
-		bacteria_image = new image(BACTERIA_FILENAME, BACTERIA_ALPHA);
-		food_image = new image(FOOD_FILENAME, FOOD_ALPHA);
-
-		red_bar_segment = new image(RED_BAR_SEGMENT);
-		yellow_bar_segment = new image(YELLOW_BAR_SEGMENT);
-		green_bar_segment = new image(GREEN_BAR_SEGMENT);
+		image::load_images();
 	} catch(const exception & error)
 	{
 		clog << "failed!" << endl;
@@ -235,8 +226,8 @@ bool application::init_populations()
 	clog << "Creating initial food nuggets..." << endl;
 	for(int c = 0; c < config_db::get().get_int_value("StartingFood"); c++)
 	{
-		food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
-			rand() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
+		food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - image::get_food().get_width()),
+			rand() % (config_db::get().get_int_value("ScreenHeight") - image::get_food().get_height())));
 	}
 
 	return true;
@@ -315,8 +306,8 @@ void application::handle_update()
 	if(counter >= config_db::get().get_int_value("FoodSpawningRate") && !stats->get_game_over())
 	{
 		counter = 0;
-		food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
-			rand() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
+		food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - image::get_food().get_width()),
+			rand() % (config_db::get().get_int_value("ScreenHeight") - image::get_food().get_height())));
 		stats->add_food();
 	}
 
@@ -427,8 +418,8 @@ void application::handle_key(SDLKey key)
 				info_mode = info_field::NONE;
 			break;
 		case SDLK_f: // F - Add food nugget
-			food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - food_image->get_width()),
-				rand() % (config_db::get().get_int_value("ScreenHeight") - food_image->get_height())));
+			food_list.push_back(food(rand() % (config_db::get().get_int_value("ScreenWidth") - image::get_food().get_width()),
+				rand() % (config_db::get().get_int_value("ScreenHeight") - image::get_food().get_height())));
 			stats->add_food();
 			break;
 		case SDLK_g: // G - Toggle generation display
@@ -485,13 +476,6 @@ application::~application()
 	// Remove food nuggets:
 	if(!food_list.empty())
 		food_list.clear();
-
-	// Delete all the images:
-	delete bacteria_image;
-	delete food_image;
-	delete red_bar_segment;
-	delete yellow_bar_segment;
-	delete green_bar_segment;
 
 	// Delete the statistic classes:
 	delete data_logger;

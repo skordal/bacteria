@@ -9,8 +9,9 @@
 #include <cmath>
 #include <SDL.h>
 
-#include "image.h"
 #include "config_db.h"
+#include "image.h"
+#include "window.h"
 
 class energy_bar
 {
