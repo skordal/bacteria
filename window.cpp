@@ -11,13 +11,13 @@ using namespace std;
 // The main window object:
 window * window::main_window = 0;
 
-// Creates the main window:
-window * window::create(int width, int height)
+// Creates the application window:
+void window::create(int width, int height) throw(runtime_error)
 {
 	if(main_window != 0)
 	{
 		cerr << "WARNING: Main window already created!" << endl;
-		return 0;
+		return;
 	}
 
 	// Initialize SDL:
@@ -25,8 +25,7 @@ window * window::create(int width, int height)
 	if(SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO) == -1)
 	{
 		clog << "failed!" << endl;
-		cerr << "ERROR: Could not initialize SDL!" << endl;
-		return 0;
+		throw runtime_error("could not initialize SDL");
 	} else
 		clog << "ok" << endl;
 	atexit(SDL_Quit);
@@ -36,8 +35,7 @@ window * window::create(int width, int height)
 	if(TTF_Init() == -1)
 	{
 		clog << "failed!" << endl;
-		cerr << "ERROR: Could not initialize SDL_TTF!" << endl;
-		return 0;
+		throw runtime_error("could not initialize SDL_TTF");
 	} else
 		clog << "ok" << endl;
 	atexit(TTF_Quit);
@@ -49,10 +47,8 @@ window * window::create(int width, int height)
 	} catch(exception & error)
 	{
 		cerr << "ERROR: " << error.what() << endl;
-		return 0;
+		return;
 	}
-
-	return main_window;
 }
 
 // Draws an image to the screen:
@@ -84,24 +80,22 @@ void window::draw(const string & text, int x, int y)
 	SDL_FreeSurface(temp);
 }
 
-window::window(int width, int height)
+window::window(int width, int height) throw(runtime_error)
 {
 	// Load the font for printing text to the screen:
 	font = TTF_OpenFont(STATUS_FONT, STATUS_FONT_SIZE);
 	if(font == 0)
-		throw runtime_error(string("Could not load font from ").append(STATUS_FONT));
+		throw runtime_error(string("could not load font from ").append(STATUS_FONT));
 	
 	// Create the window surface:
 	clog << "Creating window (" << config_db::get().get_int_value("ScreenWidth") << " x "
 		<< config_db::get().get_int_value("ScreenHeight") << ")...";
-	screen = SDL_SetVideoMode(width, height, 0,
-		config_db::get().get_bool_value("Fullscreen")
-		? SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN
-		: SDL_HWSURFACE|SDL_DOUBLEBUF);
+	screen = SDL_SetVideoMode(width, height, 0, config_db::get().get_bool_value("Fullscreen")
+		? SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN : SDL_HWSURFACE|SDL_DOUBLEBUF);
 	if(screen == 0)
 	{
 		clog << "failed!" << endl;
-		throw runtime_error("Could not create window!");
+		throw runtime_error("could not create window");
 	} else
 		clog << "ok" << endl;
 

@@ -21,10 +21,8 @@
 class window
 {
 	public:
-		// Creates the application window and returns a pointer
-		// to it. If the window exists or an error occurred, an
-		// error message is printed and 0 is returned.
-		static window * create(int width, int height);
+		// Creates the application window:
+		static void create(int width, int height) throw(std::runtime_error);
 
 		// Gets the application window:
 		static window * get() { return main_window; }
@@ -41,7 +39,7 @@ class window
 		// Flips the buffers:
 		void flip_buffers() { SDL_Flip(screen); }
 	private:
-		window(int width, int height);
+		window(int width, int height) throw(std::runtime_error);
 		~window();
 
 		// Clean-up function, destroys the main window object:

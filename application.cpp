@@ -59,10 +59,11 @@ application * application::init(int argc, char * argv[])
 		goto _skip_init;
 	}
 
-	global_app->main_window = window::create(config_db::get().get_int_value("ScreenWidth"),
-		config_db::get().get_int_value("ScreenHeight"));
-	if(global_app->main_window == 0)
+	try {
+		window::create(config_db::get().get_int_value("ScreenWidth"), config_db::get().get_int_value("ScreenHeight"));
+	} catch(exception & error)
 	{
+		cerr << "ERROR: " << error.what() << endl;
 		retval = false;
 		goto _skip_init;
 	}
@@ -290,12 +291,18 @@ const char * application::find_file(const char * filename)
 void application::handle_update()
 {
 	static int counter = 0;
+
+	// Iterators:
+	std::list<bacteria>::iterator bacteria_iterator;
+	std::list<food>::iterator food_iterator;
+
+	// List for containing newly spawning bacteria:
 	std::list<bacteria> spawn_list;
 	
 	counter++;
 
 	// Clear the screen:
-	main_window->clear();
+	window::get()->clear();
 
 	// Check if it's time for a new food nugget to spawn:
 	if(counter >= config_db::get().get_int_value("FoodSpawningRate") && !stats->get_game_over())
@@ -379,7 +386,7 @@ void application::handle_update()
 	if(display_stats)
 		stats->draw();
 
-	main_window->flip_buffers();
+	window::get()->flip_buffers();
 }
 
 // Handles a keyboard press:

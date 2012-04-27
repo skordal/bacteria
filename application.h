@@ -64,6 +64,7 @@ class application
 		void handle_update();
 		void handle_key(SDLKey key);
 
+		// Displays various messages:
 		void display_help();
 		void display_version();
 
@@ -78,12 +79,9 @@ class application
 		logger * data_logger;
 		statistics * stats;
 
-		window * main_window;
 		SDL_TimerID refresh_timer, logger_timer;
 
-		std::list<bacteria>::iterator bacteria_iterator;
-		std::list<food>::iterator food_iterator;
-
+		// The global application database:
 		static application * global_app;
 };
 
