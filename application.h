@@ -46,7 +46,7 @@ class application
 		// Finds a file in the application search path:
 		static const char * find_file(const char * filename);
 	private:
-		application();
+		application() : config_filename(""), info_mode(info_field::NONE), running(true), display_stats(true) {}
 		~application();
 
 		// Clean up function, called by atexit:

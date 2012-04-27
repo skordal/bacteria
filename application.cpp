@@ -38,11 +38,6 @@ static struct option cmd_options[] = {
 {0, 0, 0, 0}
 };
 
-application::application()
-	: config_filename(""), info_mode(info_field::NONE), running(true), display_stats(true)
-{
-}
-
 // This function initializes the application by running
 // all the other initialization functions:
 application * application::init(int argc, char * argv[])
