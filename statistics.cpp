@@ -74,6 +74,11 @@ void statistics::calc_avg_growth()
 
 	if(dt < config_db::get().get_int_value("GrowthRateSamplingInterval"))
 		return;
+	if(game_over)
+	{
+		avg_growth = 0;
+		return;
+	}
 
 	avg_growth = (avg_growth + ((float) dP / (float) dt)) / 2.0f;
 

@@ -56,13 +56,13 @@ application * application::init(int argc, char * argv[])
 
 	srand(time(0));
 
-	if(!global_app->init_config())
+	if(!global_app->init_cmd_args(argc, argv))
 	{
 		retval = false;
 		goto _skip_init;
 	}
 
-	if(!global_app->init_cmd_args(argc, argv))
+	if(!global_app->init_config())
 	{
 		retval = false;
 		goto _skip_init;
@@ -163,7 +163,7 @@ bool application::init_config()
 	// If the config filename is not empty, parse the config file.
 	if(!config_filename.empty())
 	{
-		clog << "Using configuration file " << config_filename << "... ";
+		clog << "Parsing configuration file " << config_filename << "... ";
 		config_file = new config_parser(config_filename);
 		if(!config_file->parse())
 		{

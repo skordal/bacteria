@@ -21,7 +21,7 @@
 #define STATUS_TEXT_COLOR (SDL_Color) {0, 0, 0, 0}
 
 // Window background color:
-#define BACKGROUND_R 195
+#define BACKGROUND_R 160
 #define BACKGROUND_G 255
 #define BACKGROUND_B 255
 
